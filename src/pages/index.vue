@@ -2,15 +2,10 @@
   <div class="h-screen w-full overflow-auto" ref="scrollContainer">
     <!-- 固定背景區域，會隨滾動變色 -->
     <div class="fixed top-0 left-0 w-full h-screen overflow-hidden">
-      <!-- 白色背景 -->
+      <!-- 使用单个div，通过GSAP直接改变背景色 -->
       <div
-        ref="whiteBgRef"
+        ref="bgRef"
         class="absolute top-0 left-0 w-full h-screen bg-white"
-      ></div>
-      <!-- 黄色背景，初始位置在屏幕下方 -->
-      <div
-        ref="yellowBgRef"
-        class="absolute top-0 left-0 w-full h-screen bg-yellow-500 translate-y-full"
       ></div>
     </div>
 
@@ -23,24 +18,34 @@
         <div class="flex items-center h-8">
           <h1 ref="iAmTextRef" class="text-3xl font-bold">I AM</h1>
         </div>
-        <img
-          src="../assets/images/head-shot/notion-face-cap-transparent.png"
-          alt="James"
-          class="size-50 object-contain mb-5 rounded-full bg-white"
-        />
+        <!-- 头像容器，将两张图片放在一起进行切换 -->
+        <div
+          class="relative size-50 mb-5 rounded-full bg-white overflow-hidden"
+        >
+          <img
+            ref="imageRef"
+            src="../assets/images/head-shot/notion-face-cap-transparent.png"
+            alt="James"
+            class="size-50 object-contain absolute top-0 left-0"
+          />
+          <img
+            ref="image404Ref"
+            src="../assets/images/head-shot/notion-face-cap-404-transparent.png"
+            alt="Developer"
+            class="size-50 object-contain absolute top-0 left-0 opacity-0"
+          />
+        </div>
         <!-- 文字容器，這裡將放置兩個重疊的文本 -->
         <div class="relative flex items-center h-8 w-32 overflow-hidden">
-          <!-- JAMES，會隨滾動淡出 -->
           <h1
             ref="jamesTextRef"
             class="text-3xl font-bold absolute text-center w-full"
           >
             JAMES
           </h1>
-          <!-- DEVELOPER，初始透明，會隨滾動淡入 -->
           <h1
             ref="devTextRef"
-            class="text-3xl font-bold absolute text-center w-full translate-y-full"
+            class="text-3xl font-bold absolute text-center w-full opacity-0"
           >
             DEVELOPER
           </h1>
@@ -81,19 +86,27 @@
       </div>
     </div>
 
-    <!-- 創建一個隱藏的內容塊，只用於生成滾動條 -->
-    <div
-      class="h-[200vh] opacity-0 pointer-events-none"
-      aria-hidden="true"
-    ></div>
+    <!-- 創建一個內容塊，用於生成滾動條和触发效果 -->
+    <div class="h-[300vh]" ref="scrollContent">
+      <!-- 第一屏空白區域 -->
+      <div class="h-screen"></div>
+      <!-- 第二屏空白區域 -->
+      <div class="h-screen"></div>
+      <!-- 第三屏空白區域 -->
+      <div class="h-screen"></div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { logos, socials } from "../constants/image";
 import arrowDown from "../assets/images/icons/logos/arrow-down.svg";
+
+// 注册ScrollTrigger插件
+gsap.registerPlugin(ScrollTrigger);
 
 const icons = {
   arrowDown,
@@ -174,13 +187,15 @@ const socialIcons = {
 // 建立參考
 const skillIconRefs = ref([]);
 const socialIconRefs = ref([]);
-const whiteBgRef = ref(null);
-const yellowBgRef = ref(null);
+const bgRef = ref(null);
 const jamesTextRef = ref(null);
 const devTextRef = ref(null);
 const scrollContainer = ref(null);
+const scrollContent = ref(null);
 const iAmTextRef = ref(null);
 const scrollIndicatorRef = ref(null);
+const imageRef = ref(null);
+const image404Ref = ref(null);
 
 onMounted(() => {
   // 取得所有icon元素
@@ -213,63 +228,66 @@ onMounted(() => {
     );
   });
 
-  // 使用窗口滾動事件來觸發動畫
-  if (scrollContainer.value) {
-    const container = scrollContainer.value as HTMLElement;
-    const maxScroll = container.scrollHeight - container.clientHeight;
+  // 设置滚动触发动画
+  if (scrollContainer.value && scrollContent.value) {
+    // 直接使用window作为滚动容器以确保可以正常滚动
+    ScrollTrigger.create({
+      trigger: scrollContent.value,
+      start: "top top",
+      end: "bottom bottom",
+      scrub: true, // 确保滚动效果平滑
+      markers: true, // 添加标记便于调试
+      onUpdate: (self) => {
+        const progress = self.progress;
+        console.log("Scroll progress:", progress); // 添加日志调试
 
-    container.addEventListener("scroll", () => {
-      const scrollTop = container.scrollTop;
-      const progress = Math.min(scrollTop / maxScroll, 1);
+        // 背景颜色过渡 - 从白色到橙色
+        if (bgRef.value) {
+          const element = bgRef.value as HTMLElement;
+          const redValue = 255;
+          const greenValue = Math.max(255 - Math.round(progress * 100), 130);
+          const blueValue = Math.max(255 - Math.round(progress * 220), 0);
 
-      // 背景轮播效果
-      if (whiteBgRef.value && yellowBgRef.value) {
-        gsap.to(whiteBgRef.value, {
-          y: -100 * progress + "%",
-          duration: 0.3,
-          ease: "power1.out",
-        });
-
-        gsap.to(yellowBgRef.value, {
-          y: (1 - progress) * 100 + "%",
-          duration: 0.3,
-          ease: "power1.out",
-        });
-      }
-
-      // 文字切換 - 使用 GSAP 的 carousel 效果
-      if (jamesTextRef.value && devTextRef.value) {
-        gsap.to(jamesTextRef.value, {
-          y: -100 * progress, // 向上移出
-          opacity: 1 - progress,
-          duration: 0.3,
-          ease: "power1.out",
-        });
-
-        gsap.to(devTextRef.value, {
-          y: 100 - 100 * progress, // 從下方移入
-          opacity: progress,
-          duration: 0.3,
-          ease: "power1.out",
-        });
-      }
-
-      // 文字顏色變化 - 從黑色到白色
-      const textElements = [
-        iAmTextRef.value,
-        jamesTextRef.value,
-        devTextRef.value,
-        scrollIndicatorRef.value,
-      ];
-      textElements.forEach((element) => {
-        if (element) {
-          // 計算顏色過渡: 從rgb(0,0,0)到rgb(255,255,255)
-          const colorValue = Math.min(Math.round(255 * progress), 255);
-          (
-            element as HTMLElement
-          ).style.color = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+          element.style.backgroundColor = `rgb(${redValue}, ${greenValue}, ${blueValue})`;
         }
-      });
+
+        // 图像过渡效果
+        if (imageRef.value && image404Ref.value) {
+          const normalImage = imageRef.value as HTMLElement;
+          const image404 = image404Ref.value as HTMLElement;
+
+          normalImage.style.opacity = `${1 - progress}`;
+          image404.style.opacity = `${progress}`;
+        }
+
+        // 文字切換效果
+        if (jamesTextRef.value && devTextRef.value) {
+          const jamesText = jamesTextRef.value as HTMLElement;
+          const devText = devTextRef.value as HTMLElement;
+
+          jamesText.style.opacity = `${1 - progress}`;
+          jamesText.style.transform = `translateY(${-50 * progress}px)`;
+
+          devText.style.opacity = `${progress}`;
+          devText.style.transform = `translateY(${50 - 50 * progress}px)`;
+        }
+
+        // 文字顏色變化 - 从黑色到白色
+        const textElements = [
+          iAmTextRef.value,
+          jamesTextRef.value,
+          devTextRef.value,
+          scrollIndicatorRef.value,
+        ];
+
+        textElements.forEach((element) => {
+          if (element) {
+            const el = element as HTMLElement;
+            const colorValue = Math.min(Math.round(255 * progress), 255);
+            el.style.color = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+          }
+        });
+      },
     });
   }
 });
