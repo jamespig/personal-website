@@ -1,0 +1,18 @@
+@import "tailwindcss";
+@import "./assets/css/fonts.css";
+@tailwind utilities;
+
+@theme {
+  --font-sans: "Roboto", sans-serif;
+  /* Colors */
+  --color-primary: #ffffff;
+  --color-secondary: #000000;
+  /* Poklist Colors */
+  --color-poklist-yellow: #f2ff00;
+  --color-poklist-blue: #89f3e7;
+  /* Chia Colors */
+  --color-chia-green: #769a6b;
+  --color-chia-green-light: #e7ede5;
+  --color-chia-red: #cc0000;
+  --color-chia-red-light: #ffcece;
+}
