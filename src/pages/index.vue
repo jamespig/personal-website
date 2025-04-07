@@ -1,16 +1,11 @@
 <template>
-  <div class="h-screen w-full overflow-auto" ref="scrollContainer">
+  <div class="h-screen w-full" ref="scrollContainer">
     <!-- 固定背景區域，會隨滾動變色 -->
     <div class="fixed top-0 left-0 w-full h-screen overflow-hidden">
-      <!-- 白色背景 -->
+      <!-- 使用单个div，通过GSAP直接改变背景色 -->
       <div
-        ref="whiteBgRef"
+        ref="bgRef"
         class="absolute top-0 left-0 w-full h-screen bg-white"
-      ></div>
-      <!-- 黄色背景，初始位置在屏幕下方 -->
-      <div
-        ref="yellowBgRef"
-        class="absolute top-0 left-0 w-full h-screen bg-yellow-500 translate-y-full"
       ></div>
     </div>
 
@@ -23,24 +18,34 @@
         <div class="flex items-center h-8">
           <h1 ref="iAmTextRef" class="text-3xl font-bold">I AM</h1>
         </div>
-        <img
-          src="../assets/images/head-shot/notion-face-cap-transparent.png"
-          alt="James"
-          class="size-50 object-contain mb-5 rounded-full bg-white"
-        />
+        <!-- 头像容器，将两张图片放在一起进行切换 -->
+        <div
+          class="relative size-50 mb-5 rounded-full bg-white overflow-hidden"
+        >
+          <img
+            ref="imageRef"
+            src="../assets/images/head-shot/notion-face-cap-transparent.png"
+            alt="James"
+            class="size-50 object-contain absolute top-0 left-0"
+          />
+          <img
+            ref="image404Ref"
+            src="../assets/images/head-shot/notion-face-cap-404-transparent.png"
+            alt="Developer"
+            class="size-50 object-contain absolute top-0 left-0 opacity-0"
+          />
+        </div>
         <!-- 文字容器，這裡將放置兩個重疊的文本 -->
         <div class="relative flex items-center h-8 w-32 overflow-hidden">
-          <!-- JAMES，會隨滾動淡出 -->
           <h1
             ref="jamesTextRef"
             class="text-3xl font-bold absolute text-center w-full"
           >
             JAMES
           </h1>
-          <!-- DEVELOPER，初始透明，會隨滾動淡入 -->
           <h1
             ref="devTextRef"
-            class="text-3xl font-bold absolute text-center w-full translate-y-full"
+            class="text-3xl font-bold absolute text-center w-full opacity-0"
           >
             DEVELOPER
           </h1>
@@ -53,7 +58,7 @@
         :key="`skill-${name}`"
         :src="icon.src"
         :alt="name"
-        :class="`absolute size-8 object-contain ${icon.position}`"
+        :class="`absolute size-16 object-contain ${icon.position}`"
         ref="skillIconRefs"
       />
 
@@ -63,7 +68,7 @@
         :key="`social-${name}`"
         :src="icon.src"
         :alt="name"
-        :class="`absolute size-10 object-contain ${icon.position}`"
+        :class="`absolute size-24 object-contain ${icon.position}`"
         ref="socialIconRefs"
       />
 
@@ -81,19 +86,25 @@
       </div>
     </div>
 
-    <!-- 創建一個隱藏的內容塊，只用於生成滾動條 -->
-    <div
-      class="h-[200vh] opacity-0 pointer-events-none"
-      aria-hidden="true"
-    ></div>
+    <!-- 創建一個內容塊，用於生成滾動條和触发效果 -->
+    <div class="h-[200vh]" ref="scrollContent">
+      <!-- 第一屏空白區域 -->
+      <div class="h-screen"></div>
+      <!-- 第二屏空白區域 -->
+      <div class="h-screen"></div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { logos, socials } from "../constants/image";
 import arrowDown from "../assets/images/icons/logos/arrow-down.svg";
+
+// 注册ScrollTrigger插件
+gsap.registerPlugin(ScrollTrigger);
 
 const icons = {
   arrowDown,
@@ -103,51 +114,51 @@ const icons = {
 const skillIcons = {
   html: {
     src: logos.html,
-    position: "top-[50%] right-[10%]",
+    position: "md:top-[50%] md:right-[10%] top-[20%] right-[5%]",
   },
   css: {
     src: logos.css,
-    position: "top-[20%] right-[15%]",
+    position: "md:top-[20%] md:right-[15%] top-[10%] right-[10%]",
   },
   javascript: {
     src: logos.javascript,
-    position: "bottom-[60%] left-[20%]",
+    position: "md:bottom-[60%] md:left-[20%] bottom-[40%] left-[5%]",
   },
   typescript: {
     src: logos.typescript,
-    position: "top-[20%] left-[60%]",
+    position: "md:top-[20%] md:left-[55%] top-[10%] left-[50%]",
   },
   react: {
     src: logos.react,
-    position: "top-[20%] left-[40%]",
+    position: "md:top-[20%] md:left-[40%] top-[20%] left-[10%]",
   },
   vue: {
     src: logos.vue,
-    position: "bottom-[20%] right-[40%]",
+    position: "md:bottom-[20%] md:right-[40%] bottom-[15%] right-[32%]",
   },
   nuxt: {
     src: logos.nuxt,
-    position: "top-[15%] left-[15%]",
+    position: "md:top-[15%] md:left-[15%] top-[5%] left-[10%]",
   },
   next: {
     src: logos.next,
-    position: "bottom-[20%] right-[30%]",
+    position: "md:bottom-[20%] md:right-[30%] bottom-[20%] right-[15%]",
   },
   tailwindcss: {
     src: logos.tailwindcss,
-    position: "top-[30%] right-[25%]",
+    position: "md:top-[10%] md:right-[25%] top-[25%] right-[20%]",
   },
   vite: {
     src: logos.vite,
-    position: "bottom-[25%] left-[30%]",
+    position: "md:bottom-[25%] md:left-[30%] bottom-[15%] left-[25%]",
   },
   docker: {
     src: logos.docker,
-    position: "top-[50%] left-[10%]",
+    position: "md:top-[50%] md:left-[10%] top-[40%] left-[5%]",
   },
   pinia: {
     src: logos.pinia,
-    position: "bottom-[15%] left-[40%]",
+    position: "md:bottom-[15%] md:left-[40%] bottom-[10%] left-[35%]",
   },
 };
 
@@ -155,32 +166,34 @@ const skillIcons = {
 const socialIcons = {
   github: {
     src: socials.github,
-    position: "top-[25%] left-[30%]",
+    position: "md:top-[25%] md:left-[30%] top-[20%] left-[25%]",
   },
   instagram: {
     src: socials.instgram,
-    position: "bottom-[30%] left-[15%]",
+    position: "md:bottom-[30%] md:left-[15%] bottom-[20%] left-[10%]",
   },
   figma: {
     src: socials.figma,
-    position: "top-[40%] right-[20%]",
+    position: "md:top-[30%] md:right-[30%] top-[35%] right-[5%]",
   },
   medium: {
     src: socials.medium,
-    position: "top-[70%] right-[10%]",
+    position: "md:top-[70%] md:right-[10%] top-[60%] right-[5%]",
   },
 };
 
 // 建立參考
 const skillIconRefs = ref([]);
 const socialIconRefs = ref([]);
-const whiteBgRef = ref(null);
-const yellowBgRef = ref(null);
+const bgRef = ref(null);
 const jamesTextRef = ref(null);
 const devTextRef = ref(null);
 const scrollContainer = ref(null);
+const scrollContent = ref(null);
 const iAmTextRef = ref(null);
 const scrollIndicatorRef = ref(null);
+const imageRef = ref(null);
+const image404Ref = ref(null);
 
 onMounted(() => {
   // 取得所有icon元素
@@ -213,63 +226,64 @@ onMounted(() => {
     );
   });
 
-  // 使用窗口滾動事件來觸發動畫
-  if (scrollContainer.value) {
-    const container = scrollContainer.value as HTMLElement;
-    const maxScroll = container.scrollHeight - container.clientHeight;
+  // 设置滚动触发动画
+  if (scrollContainer.value && scrollContent.value) {
+    // 直接使用window作为滚动容器以确保可以正常滚动
+    ScrollTrigger.create({
+      trigger: scrollContent.value,
+      start: "top top",
+      end: "bottom bottom",
+      scrub: true, // 确保滚动效果平滑
+      onUpdate: (self) => {
+        const progress = self.progress;
 
-    container.addEventListener("scroll", () => {
-      const scrollTop = container.scrollTop;
-      const progress = Math.min(scrollTop / maxScroll, 1);
+        // 背景颜色过渡 - 从白色到橙色
+        if (bgRef.value) {
+          const element = bgRef.value as HTMLElement;
+          const redValue = 255;
+          const greenValue = Math.max(255 - Math.round(progress * 100), 130);
+          const blueValue = Math.max(255 - Math.round(progress * 220), 0);
 
-      // 背景轮播效果
-      if (whiteBgRef.value && yellowBgRef.value) {
-        gsap.to(whiteBgRef.value, {
-          y: -100 * progress + "%",
-          duration: 0.3,
-          ease: "power1.out",
-        });
-
-        gsap.to(yellowBgRef.value, {
-          y: (1 - progress) * 100 + "%",
-          duration: 0.3,
-          ease: "power1.out",
-        });
-      }
-
-      // 文字切換 - 使用 GSAP 的 carousel 效果
-      if (jamesTextRef.value && devTextRef.value) {
-        gsap.to(jamesTextRef.value, {
-          y: -100 * progress, // 向上移出
-          opacity: 1 - progress,
-          duration: 0.3,
-          ease: "power1.out",
-        });
-
-        gsap.to(devTextRef.value, {
-          y: 100 - 100 * progress, // 從下方移入
-          opacity: progress,
-          duration: 0.3,
-          ease: "power1.out",
-        });
-      }
-
-      // 文字顏色變化 - 從黑色到白色
-      const textElements = [
-        iAmTextRef.value,
-        jamesTextRef.value,
-        devTextRef.value,
-        scrollIndicatorRef.value,
-      ];
-      textElements.forEach((element) => {
-        if (element) {
-          // 計算顏色過渡: 從rgb(0,0,0)到rgb(255,255,255)
-          const colorValue = Math.min(Math.round(255 * progress), 255);
-          (
-            element as HTMLElement
-          ).style.color = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+          element.style.backgroundColor = `rgb(${redValue}, ${greenValue}, ${blueValue})`;
         }
-      });
+
+        // 图像过渡效果
+        if (imageRef.value && image404Ref.value) {
+          const normalImage = imageRef.value as HTMLElement;
+          const image404 = image404Ref.value as HTMLElement;
+
+          normalImage.style.opacity = `${1 - progress}`;
+          image404.style.opacity = `${progress}`;
+        }
+
+        // 文字切換效果
+        if (jamesTextRef.value && devTextRef.value) {
+          const jamesText = jamesTextRef.value as HTMLElement;
+          const devText = devTextRef.value as HTMLElement;
+
+          jamesText.style.opacity = `${1 - progress}`;
+          jamesText.style.transform = `translateY(${-50 * progress}px)`;
+
+          devText.style.opacity = `${progress}`;
+          devText.style.transform = `translateY(${50 - 50 * progress}px)`;
+        }
+
+        // 文字顏色變化 - 从黑色到白色
+        const textElements = [
+          iAmTextRef.value,
+          jamesTextRef.value,
+          devTextRef.value,
+          scrollIndicatorRef.value,
+        ];
+
+        textElements.forEach((element) => {
+          if (element) {
+            const el = element as HTMLElement;
+            const colorValue = Math.min(Math.round(255 * progress), 255);
+            el.style.color = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+          }
+        });
+      },
     });
   }
 });
