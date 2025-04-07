@@ -58,7 +58,7 @@
         :key="`skill-${name}`"
         :src="icon.src"
         :alt="name"
-        :class="`absolute size-8 object-contain ${icon.position}`"
+        :class="`absolute size-16 object-contain ${icon.position}`"
         ref="skillIconRefs"
       />
 
@@ -68,7 +68,7 @@
         :key="`social-${name}`"
         :src="icon.src"
         :alt="name"
-        :class="`absolute size-10 object-contain ${icon.position}`"
+        :class="`absolute size-24 object-contain ${icon.position}`"
         ref="socialIconRefs"
       />
 
@@ -114,51 +114,51 @@ const icons = {
 const skillIcons = {
   html: {
     src: logos.html,
-    position: "top-[50%] right-[10%]",
+    position: "md:top-[50%] md:right-[10%] top-[20%] right-[5%]",
   },
   css: {
     src: logos.css,
-    position: "top-[20%] right-[15%]",
+    position: "md:top-[20%] md:right-[15%] top-[10%] right-[10%]",
   },
   javascript: {
     src: logos.javascript,
-    position: "bottom-[60%] left-[20%]",
+    position: "md:bottom-[60%] md:left-[20%] bottom-[40%] left-[5%]",
   },
   typescript: {
     src: logos.typescript,
-    position: "top-[20%] left-[60%]",
+    position: "md:top-[20%] md:left-[55%] top-[10%] left-[50%]",
   },
   react: {
     src: logos.react,
-    position: "top-[20%] left-[40%]",
+    position: "md:top-[20%] md:left-[40%] top-[20%] left-[10%]",
   },
   vue: {
     src: logos.vue,
-    position: "bottom-[20%] right-[40%]",
+    position: "md:bottom-[20%] md:right-[40%] bottom-[15%] right-[32%]",
   },
   nuxt: {
     src: logos.nuxt,
-    position: "top-[15%] left-[15%]",
+    position: "md:top-[15%] md:left-[15%] top-[5%] left-[10%]",
   },
   next: {
     src: logos.next,
-    position: "bottom-[20%] right-[30%]",
+    position: "md:bottom-[20%] md:right-[30%] bottom-[20%] right-[15%]",
   },
   tailwindcss: {
     src: logos.tailwindcss,
-    position: "top-[30%] right-[25%]",
+    position: "md:top-[10%] md:right-[25%] top-[25%] right-[20%]",
   },
   vite: {
     src: logos.vite,
-    position: "bottom-[25%] left-[30%]",
+    position: "md:bottom-[25%] md:left-[30%] bottom-[15%] left-[25%]",
   },
   docker: {
     src: logos.docker,
-    position: "top-[50%] left-[10%]",
+    position: "md:top-[50%] md:left-[10%] top-[40%] left-[5%]",
   },
   pinia: {
     src: logos.pinia,
-    position: "bottom-[15%] left-[40%]",
+    position: "md:bottom-[15%] md:left-[40%] bottom-[10%] left-[35%]",
   },
 };
 
@@ -166,19 +166,19 @@ const skillIcons = {
 const socialIcons = {
   github: {
     src: socials.github,
-    position: "top-[25%] left-[30%]",
+    position: "md:top-[25%] md:left-[30%] top-[20%] left-[25%]",
   },
   instagram: {
     src: socials.instgram,
-    position: "bottom-[30%] left-[15%]",
+    position: "md:bottom-[30%] md:left-[15%] bottom-[20%] left-[10%]",
   },
   figma: {
     src: socials.figma,
-    position: "top-[40%] right-[20%]",
+    position: "md:top-[30%] md:right-[30%] top-[35%] right-[5%]",
   },
   medium: {
     src: socials.medium,
-    position: "top-[70%] right-[10%]",
+    position: "md:top-[70%] md:right-[10%] top-[60%] right-[5%]",
   },
 };
 
