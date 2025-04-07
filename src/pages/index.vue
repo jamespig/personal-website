@@ -87,12 +87,10 @@
     </div>
 
     <!-- 創建一個內容塊，用於生成滾動條和触发效果 -->
-    <div class="h-[300vh]" ref="scrollContent">
+    <div class="h-[200vh]" ref="scrollContent">
       <!-- 第一屏空白區域 -->
       <div class="h-screen"></div>
       <!-- 第二屏空白區域 -->
-      <div class="h-screen"></div>
-      <!-- 第三屏空白區域 -->
       <div class="h-screen"></div>
     </div>
   </div>
