@@ -16,3 +16,21 @@
   --color-chia-red: #cc0000;
   --color-chia-red-light: #ffcece;
 }
+
+/* 自定义滚动条样式 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: white;
+}
+
+::-webkit-scrollbar-thumb {
+  background: black;
+}
+
+/* 隐藏滚动条按钮 */
+::-webkit-scrollbar-button {
+  display: none;
+}
