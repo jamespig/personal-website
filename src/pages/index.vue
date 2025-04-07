@@ -81,7 +81,7 @@
       </div>
     </div>
 
-    <!-- 创建一个隐藏的内容块，只用于生成滚动条 -->
+    <!-- 創建一個隱藏的內容塊，只用於生成滾動條 -->
     <div
       class="h-[200vh] opacity-0 pointer-events-none"
       aria-hidden="true"
@@ -103,7 +103,7 @@ const icons = {
 const skillIcons = {
   html: {
     src: logos.html,
-    position: "top-[70%] right-[20%]",
+    position: "top-[50%] right-[10%]",
   },
   css: {
     src: logos.css,
@@ -111,11 +111,11 @@ const skillIcons = {
   },
   javascript: {
     src: logos.javascript,
-    position: "bottom-[30%] left-[20%]",
+    position: "bottom-[60%] left-[20%]",
   },
   typescript: {
     src: logos.typescript,
-    position: "top-[40%] left-[60%]",
+    position: "top-[20%] left-[60%]",
   },
   react: {
     src: logos.react,
@@ -123,7 +123,7 @@ const skillIcons = {
   },
   vue: {
     src: logos.vue,
-    position: "bottom-[40%] right-[30%]",
+    position: "bottom-[20%] right-[40%]",
   },
   nuxt: {
     src: logos.nuxt,
@@ -131,7 +131,7 @@ const skillIcons = {
   },
   next: {
     src: logos.next,
-    position: "bottom-[20%] right-[15%]",
+    position: "bottom-[20%] right-[30%]",
   },
   tailwindcss: {
     src: logos.tailwindcss,
@@ -143,7 +143,7 @@ const skillIcons = {
   },
   docker: {
     src: logos.docker,
-    position: "top-[60%] left-[10%]",
+    position: "top-[50%] left-[10%]",
   },
   pinia: {
     src: logos.pinia,
@@ -167,7 +167,7 @@ const socialIcons = {
   },
   medium: {
     src: socials.medium,
-    position: "top-[50%] left-[25%]",
+    position: "top-[70%] right-[10%]",
   },
 };
 
@@ -247,7 +247,7 @@ onMounted(() => {
         });
 
         gsap.to(devTextRef.value, {
-          y: 100 - 100 * progress, // 从下方移入
+          y: 100 - 100 * progress, // 從下方移入
           opacity: progress,
           duration: 0.3,
           ease: "power1.out",
