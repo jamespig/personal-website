@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen w-full overflow-auto" ref="scrollContainer">
+  <div class="h-screen w-full" ref="scrollContainer">
     <!-- 固定背景區域，會隨滾動變色 -->
     <div class="fixed top-0 left-0 w-full h-screen overflow-hidden">
       <!-- 使用单个div，通过GSAP直接改变背景色 -->
@@ -234,10 +234,8 @@ onMounted(() => {
       start: "top top",
       end: "bottom bottom",
       scrub: true, // 确保滚动效果平滑
-      markers: true, // 添加标记便于调试
       onUpdate: (self) => {
         const progress = self.progress;
-        console.log("Scroll progress:", progress); // 添加日志调试
 
         // 背景颜色过渡 - 从白色到橙色
         if (bgRef.value) {
