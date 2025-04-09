@@ -11,71 +11,83 @@
 
     <!-- 固定內容區域，不隨滾動移動 -->
     <div
-      class="fixed top-0 left-0 w-full h-screen flex justify-center items-center"
+      class="fixed top-0 left-0 w-full h-screen grid grid-cols-[minmax(300px,800px)_1fr] md:grid-cols-[0.5fr_minmax(300px,600px)_2fr] grid-rows-[1fr_auto_1fr]"
     >
-      <!-- 中心人物和文字 -->
-      <div class="z-10 flex flex-col items-center md:flex-row gap-4">
-        <div class="flex items-center h-8">
+      <!-- 中心人物和文字 - 在移动端使用垂直布局，在桌面端使用水平布局 -->
+      <div
+        class="z-10 flex flex-col items-center md:grid md:grid-cols-3 gap-8 md:gap-4 justify-center col-start-1 col-end-2 md:col-start-2 md:col-end-3 row-start-2 row-end-3 py-10 md:pl-0"
+      >
+        <!-- I AM 文字 -->
+        <div class="flex items-center justify-center md:justify-self-end">
           <h1 ref="iAmTextRef" class="text-3xl font-bold">I AM</h1>
         </div>
-        <!-- 头像容器，将两张图片放在一起进行切换 -->
+
+        <!-- 头像容器 -->
         <div
-          class="relative size-50 mb-5 rounded-full bg-white overflow-hidden"
+          class="max-w-40 md:max-w-full w-full aspect-square bg-white relative self-center"
         >
           <img
             ref="imageRef"
             src="../assets/images/head-shot/notion-face-cap-transparent.png"
             alt="James"
-            class="size-50 object-contain absolute top-0 left-0"
+            class="w-full h-full object-contain absolute top-0 left-0"
           />
           <img
             ref="image404Ref"
             src="../assets/images/head-shot/notion-face-cap-404-transparent.png"
             alt="Developer"
-            class="size-50 object-contain absolute top-0 left-0 opacity-0"
+            class="w-full h-full object-contain absolute top-0 left-0 opacity-0"
           />
         </div>
-        <!-- 文字容器，這裡將放置兩個重疊的文本 -->
-        <div class="relative flex items-center h-8 w-32 overflow-hidden">
+
+        <!-- JAMES/DEVELOPER 文字容器 -->
+        <div
+          class="flex items-center justify-center md:justify-self-start relative w-full"
+        >
+          <!-- 添加一个空白占位元素，让绝对定位元素有足够的高度 -->
+          <div class="invisible h-12 md:h-auto">JAMES</div>
           <h1
             ref="jamesTextRef"
-            class="text-3xl font-bold absolute text-center w-full"
+            class="text-3xl md:text-9xl font-bold absolute text-center w-full left-0"
           >
             JAMES
           </h1>
           <h1
             ref="devTextRef"
-            class="text-3xl font-bold absolute text-center w-full opacity-0"
+            class="text-3xl md:text-9xl font-bold absolute text-center w-full opacity-0 left-0"
           >
             DEVELOPER
           </h1>
         </div>
       </div>
 
-      <!-- Skill Icons -->
-      <img
-        v-for="(icon, name) in skillIcons"
-        :key="`skill-${name}`"
-        :src="icon.src"
-        :alt="name"
-        :class="`absolute size-16 object-contain ${icon.position}`"
-        ref="skillIconRefs"
-      />
+      <!-- 创建一个包含所有图标的网格容器 -->
+      <div class="absolute w-full h-full grid grid-cols-12 grid-rows-12">
+        <!-- Skill Icons - 在手机端隐藏 -->
+        <img
+          v-for="(icon, name) in skillIcons"
+          :key="`skill-${name}`"
+          :src="icon.src"
+          :alt="name"
+          :class="`w-10 h-10 md:size-16 object-contain ${icon.position} opacity-30 md:opacity-100`"
+          ref="skillIconRefs"
+        />
 
-      <!-- Social Media Icons -->
-      <img
-        v-for="(icon, name) in socialIcons"
-        :key="`social-${name}`"
-        :src="icon.src"
-        :alt="name"
-        :class="`absolute size-24 object-contain ${icon.position}`"
-        ref="socialIconRefs"
-      />
+        <!-- Social Media Icons - 在手机端隐藏 -->
+        <img
+          v-for="(icon, name) in socialIcons"
+          :key="`social-${name}`"
+          :src="icon.src"
+          :alt="name"
+          :class="`w-16 h-16 md:size-24 object-contain ${icon.position} opacity-30 md:opacity-100`"
+          ref="socialIconRefs"
+        />
+      </div>
 
       <!-- 向下滚动指示 -->
       <div
         ref="scrollIndicatorRef"
-        class="absolute bottom-8 flex flex-col items-center gap-2"
+        class="grid justify-items-center gap-2 col-span-full row-start-3 row-end-4 self-end pb-8"
       >
         <img
           :src="icons.arrowDown"
@@ -114,51 +126,51 @@ const icons = {
 const skillIcons = {
   html: {
     src: logos.html,
-    position: "md:top-[50%] md:right-[10%] top-[20%] right-[5%]",
+    position: "col-start-10 col-end-11 row-start-6 row-end-7", // 右侧中间
   },
   css: {
     src: logos.css,
-    position: "md:top-[20%] md:right-[15%] top-[10%] right-[10%]",
+    position: "col-start-9 col-end-10 row-start-2 row-end-3", // 右上
   },
   javascript: {
     src: logos.javascript,
-    position: "md:bottom-[60%] md:left-[20%] bottom-[40%] left-[5%]",
+    position: "col-start-3 col-end-4 row-start-5 row-end-6", // 左侧中间
   },
   typescript: {
     src: logos.typescript,
-    position: "md:top-[20%] md:left-[55%] top-[10%] left-[50%]",
+    position: "col-start-7 col-end-8 row-start-2 row-end-3", // 上方中间偏右
   },
   react: {
     src: logos.react,
-    position: "md:top-[20%] md:left-[40%] top-[20%] left-[10%]",
+    position: "col-start-4 col-end-5 row-start-3 row-end-4", // 左上方
   },
   vue: {
     src: logos.vue,
-    position: "md:bottom-[20%] md:right-[40%] bottom-[15%] right-[32%]",
+    position: "col-start-8 col-end-9 row-start-9 row-end-10", // 右下方
   },
   nuxt: {
     src: logos.nuxt,
-    position: "md:top-[15%] md:left-[15%] top-[5%] left-[10%]",
+    position: "col-start-3 col-end-4 row-start-2 row-end-3", // 左上
   },
   next: {
     src: logos.next,
-    position: "md:bottom-[20%] md:right-[30%] bottom-[20%] right-[15%]",
+    position: "col-start-9 col-end-10 row-start-9 row-end-10", // 右下
   },
   tailwindcss: {
     src: logos.tailwindcss,
-    position: "md:top-[10%] md:right-[25%] top-[25%] right-[20%]",
+    position: "col-start-9 col-end-10 row-start-3 row-end-4", // 右上方
   },
   vite: {
     src: logos.vite,
-    position: "md:bottom-[25%] md:left-[30%] bottom-[15%] left-[25%]",
+    position: "col-start-4 col-end-5 row-start-9 row-end-10", // 左下方
   },
   docker: {
     src: logos.docker,
-    position: "md:top-[50%] md:left-[10%] top-[40%] left-[5%]",
+    position: "col-start-2 col-end-3 row-start-6 row-end-7", // 左侧中间
   },
   pinia: {
     src: logos.pinia,
-    position: "md:bottom-[15%] md:left-[40%] bottom-[10%] left-[35%]",
+    position: "col-start-5 col-end-6 row-start-10 row-end-11", // 左下
   },
 };
 
@@ -166,19 +178,19 @@ const skillIcons = {
 const socialIcons = {
   github: {
     src: socials.github,
-    position: "md:top-[25%] md:left-[30%] top-[20%] left-[25%]",
+    position: "col-start-5 col-end-6 row-start-3 row-end-4", // 左上方中间
   },
   instagram: {
     src: socials.instgram,
-    position: "md:bottom-[30%] md:left-[15%] bottom-[20%] left-[10%]",
+    position: "col-start-3 col-end-4 row-start-8 row-end-9", // 左下方
   },
   figma: {
     src: socials.figma,
-    position: "md:top-[30%] md:right-[30%] top-[35%] right-[5%]",
+    position: "col-start-9 col-end-10 row-start-4 row-end-5", // 右上方中间
   },
   medium: {
     src: socials.medium,
-    position: "md:top-[70%] md:right-[10%] top-[60%] right-[5%]",
+    position: "col-start-10 col-end-11 row-start-7 row-end-8", // 右下方中间
   },
 };
 
