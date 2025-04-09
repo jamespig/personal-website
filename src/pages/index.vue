@@ -63,7 +63,7 @@
 
       <!-- 创建一个包含所有图标的网格容器 -->
       <div class="absolute w-full h-full grid grid-cols-12 grid-rows-12">
-        <!-- Skill Icons - 在手机端隐藏 -->
+        <!-- Skill Icons  -->
         <img
           v-for="(icon, name) in skillIcons"
           :key="`skill-${name}`"
@@ -73,13 +73,13 @@
           ref="skillIconRefs"
         />
 
-        <!-- Social Media Icons - 在手机端隐藏 -->
+        <!-- Social Media Icons -->
         <img
           v-for="(icon, name) in socialIcons"
           :key="`social-${name}`"
           :src="icon.src"
           :alt="name"
-          :class="`w-16 h-16 md:size-24 object-contain ${icon.position} opacity-30 md:opacity-100`"
+          :class="`w-full h-full object-contain ${icon.position} opacity-30 md:opacity-100`"
           ref="socialIconRefs"
         />
       </div>
@@ -178,19 +178,19 @@ const skillIcons = {
 const socialIcons = {
   github: {
     src: socials.github,
-    position: "col-start-5 col-end-6 row-start-3 row-end-4", // 左上方中间
+    position: "col-start-4 col-end-6 row-start-3 row-end-5", // 左上方中间
   },
   instagram: {
     src: socials.instgram,
-    position: "col-start-3 col-end-4 row-start-8 row-end-9", // 左下方
+    position: "col-start-2 col-end-4 row-start-7 row-end-10", // 左下方
   },
   figma: {
     src: socials.figma,
-    position: "col-start-9 col-end-10 row-start-4 row-end-5", // 右上方中间
+    position: "col-start-9 col-end-10 row-start-5 row-end-6", // 右上方
   },
   medium: {
     src: socials.medium,
-    position: "col-start-10 col-end-11 row-start-7 row-end-8", // 右下方中间
+    position: "col-start-10 col-end-12 row-start-9 row-end-11", // 右下方
   },
 };
 
@@ -209,15 +209,22 @@ const image404Ref = ref(null);
 
 onMounted(() => {
   // 取得所有icon元素
-  const allIcons = [...skillIconRefs.value, ...socialIconRefs.value];
+  const allSocialIcons = [...socialIconRefs.value];
+  const allSkillIcons = [...skillIconRefs.value];
 
-  // 設定初始位置（在螢幕上方）
-  gsap.set(allIcons, {
+  // 設定初始位置 - 社交图标从上方掉落
+  gsap.set(allSocialIcons, {
     y: -100,
     opacity: 0,
   });
 
-  // 動畫時間線
+  // 技能图标初始隐藏
+  gsap.set(allSkillIcons, {
+    opacity: 0,
+    scale: 0.5,
+  });
+
+  // 動畫時間線 - 只有社交图标有初始动画
   const tl = gsap.timeline({
     defaults: {
       duration: 1.5,
@@ -225,8 +232,8 @@ onMounted(() => {
     },
   });
 
-  // 添加圖標掉落動畫，隨機時間錯開
-  allIcons.forEach((icon) => {
+  // 添加社交圖標掉落動畫，隨機時間錯開
+  allSocialIcons.forEach((icon) => {
     tl.to(
       icon,
       {
@@ -279,6 +286,28 @@ onMounted(() => {
           devText.style.opacity = `${progress}`;
           devText.style.transform = `translateY(${50 - 50 * progress}px)`;
         }
+
+        // 技能图标显示效果 - 随着滚动逐渐显示
+        allSkillIcons.forEach((icon) => {
+          if (icon) {
+            const el = icon as HTMLElement;
+            // 只有当progress超过0.1后才开始显示
+            const iconOpacity = progress < 0.1 ? 0 : Math.min(progress * 2, 1);
+            const iconScale = 0.5 + progress * 0.5;
+            el.style.opacity = `${iconOpacity}`;
+            el.style.transform = `scale(${iconScale})`;
+          }
+        });
+
+        // 社交图标隐藏效果 - 随着滚动逐渐隐藏
+        allSocialIcons.forEach((icon) => {
+          if (icon) {
+            const el = icon as HTMLElement;
+            // 随着滚动进度增加，社交图标逐渐隐藏
+            const iconOpacity = Math.max(1 - progress * 2, 0);
+            el.style.opacity = `${iconOpacity}`;
+          }
+        });
 
         // 文字顏色變化 - 从黑色到白色
         const textElements = [
