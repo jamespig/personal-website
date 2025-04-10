@@ -63,13 +63,13 @@
 
       <!-- 创建一个包含所有图标的网格容器 -->
       <div class="absolute w-full h-full grid grid-cols-12 grid-rows-12">
-        <!-- Skill Icons  -->
+        <!-- Skill Icons -->
         <img
           v-for="(icon, name) in skillIcons"
           :key="`skill-${name}`"
           :src="icon.src"
           :alt="name"
-          :class="`w-10 h-10 md:size-16 object-contain ${icon.position} opacity-30 md:opacity-100`"
+          :class="`aspect-square object-contain ${icon.position} opacity-30 md:opacity-100 p-2 rounded-full shadow-2xl`"
           ref="skillIconRefs"
         />
 
@@ -79,7 +79,7 @@
           :key="`social-${name}`"
           :src="icon.src"
           :alt="name"
-          :class="`w-full h-full object-contain ${icon.position} opacity-30 md:opacity-100`"
+          :class="`w-full h-auto rounded-full object-contain ${icon.position} opacity-30 md:opacity-100 p-2 shadow-2xl`"
           ref="socialIconRefs"
         />
       </div>
@@ -126,51 +126,47 @@ const icons = {
 const skillIcons = {
   html: {
     src: logos.html,
-    position: "col-start-10 col-end-11 row-start-6 row-end-7", // 右侧中间
+    position: "col-start-3 col-end-4 row-start-1 row-end-2",
   },
   css: {
     src: logos.css,
-    position: "col-start-9 col-end-10 row-start-2 row-end-3", // 右上
+    position: "col-start-10 col-end-11 row-start-3 row-end-4",
   },
   javascript: {
     src: logos.javascript,
-    position: "col-start-3 col-end-4 row-start-5 row-end-6", // 左侧中间
+    position: "col-start-2 col-end-3 row-start-7 row-end-8",
   },
   typescript: {
     src: logos.typescript,
-    position: "col-start-7 col-end-8 row-start-2 row-end-3", // 上方中间偏右
+    position: "col-start-7 col-end-9 row-start-1 row-end-3",
   },
   react: {
     src: logos.react,
-    position: "col-start-4 col-end-5 row-start-3 row-end-4", // 左上方
+    position: "col-start-12 col-end-13 row-start-4 row-end-5",
   },
   vue: {
     src: logos.vue,
-    position: "col-start-8 col-end-9 row-start-9 row-end-10", // 右下方
+    position: "col-start-10 col-end-13 row-start-8 row-end-11",
   },
   nuxt: {
     src: logos.nuxt,
-    position: "col-start-3 col-end-4 row-start-2 row-end-3", // 左上
+    position: "col-start-1 col-end-3 row-start-2 row-end-4",
   },
   next: {
     src: logos.next,
-    position: "col-start-9 col-end-10 row-start-9 row-end-10", // 右下
+    position: "col-start-8 col-end-9 row-start-11 row-end-12",
   },
   tailwindcss: {
     src: logos.tailwindcss,
-    position: "col-start-9 col-end-10 row-start-3 row-end-4", // 右上方
+    position: "col-start-5 col-end-6 row-start-2 row-end-3",
   },
   vite: {
     src: logos.vite,
-    position: "col-start-4 col-end-5 row-start-9 row-end-10", // 左下方
+    position: "col-start-4 col-end-5 row-start-9 row-end-10",
   },
   docker: {
     src: logos.docker,
-    position: "col-start-2 col-end-3 row-start-6 row-end-7", // 左侧中间
-  },
-  pinia: {
-    src: logos.pinia,
-    position: "col-start-5 col-end-6 row-start-10 row-end-11", // 左下
+    position: "col-start-1 col-end-2 row-start-10 row-end-11",
   },
 };
 
@@ -178,15 +174,15 @@ const skillIcons = {
 const socialIcons = {
   github: {
     src: socials.github,
-    position: "col-start-4 col-end-6 row-start-3 row-end-5", // 左上方中间
+    position: "col-start-2 col-end-3 row-start-2 row-end-3", // 左上方中间
   },
   instagram: {
     src: socials.instgram,
-    position: "col-start-2 col-end-4 row-start-7 row-end-10", // 左下方
+    position: "col-start-3 col-end-4 row-start-9 row-end-10", // 左下方
   },
   figma: {
     src: socials.figma,
-    position: "col-start-9 col-end-10 row-start-5 row-end-6", // 右上方
+    position: "col-start-10 col-end-11 row-start-5 row-end-6", // 右上方
   },
   medium: {
     src: socials.medium,
@@ -303,9 +299,11 @@ onMounted(() => {
         allSocialIcons.forEach((icon) => {
           if (icon) {
             const el = icon as HTMLElement;
-            // 随着滚动进度增加，社交图标逐渐隐藏
+            // 随着滚动进度增加，社交图标逐渐隐藏并缩小
             const iconOpacity = Math.max(1 - progress * 2, 0);
+            const iconScale = Math.max(1 - progress, 0.5);
             el.style.opacity = `${iconOpacity}`;
+            el.style.transform = `scale(${iconScale})`;
           }
         });
 
