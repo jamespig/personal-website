@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen bg-amber-500 flex items-center"></div>
+  <div class="h-screen bg-orange-500 flex items-center"></div>
 </template>
 
 <script lang="ts" setup>
