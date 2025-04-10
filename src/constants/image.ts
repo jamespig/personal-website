@@ -6,7 +6,6 @@ import typescript from "../assets/images/icons/logos/skills/typescript.svg";
 import react from "../assets/images/icons/logos/skills/react.svg";
 import vue from "../assets/images/icons/logos/skills/vue.svg";
 import vueuse from "../assets/images/icons/logos/skills/vueuse.svg";
-import pinia from "../assets/images/icons/logos/skills/pinia.svg";
 import next from "../assets/images/icons/logos/skills/next.svg";
 import nuxt from "../assets/images/icons/logos/skills/nuxt.svg";
 import tailwindcss from "../assets/images/icons/logos/skills/tailwindcss.svg";
@@ -27,7 +26,6 @@ export const logos = {
   react: react,
   vue: vue,
   vueuse: vueuse,
-  pinia: pinia,
   next: next,
   nuxt: nuxt,
   tailwindcss: tailwindcss,

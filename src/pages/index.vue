@@ -1,96 +1,17 @@
 <template>
   <div class="h-screen w-full" ref="scrollContainer">
-    <!-- 固定背景區域，會隨滾動變色 -->
-    <div class="fixed top-0 left-0 w-full h-screen overflow-hidden">
-      <!-- 使用单个div，通过GSAP直接改变背景色 -->
-      <div
-        ref="bgRef"
-        class="absolute top-0 left-0 w-full h-screen bg-white"
-      ></div>
-    </div>
+    <Background ref="backgroundRef" />
 
-    <!-- 固定內容區域，不隨滾動移動 -->
     <div
-      class="fixed top-0 left-0 w-full h-screen flex justify-center items-center"
+      class="fixed top-0 left-0 w-full h-screen grid grid-cols-[minmax(300px,800px)_1fr] md:grid-cols-[0.5fr_minmax(300px,600px)_2fr] grid-rows-[1fr_auto_1fr]"
     >
-      <!-- 中心人物和文字 -->
-      <div class="z-10 flex flex-col items-center md:flex-row gap-4">
-        <div class="flex items-center h-8">
-          <h1 ref="iAmTextRef" class="text-3xl font-bold">I AM</h1>
-        </div>
-        <!-- 头像容器，将两张图片放在一起进行切换 -->
-        <div
-          class="relative size-50 mb-5 rounded-full bg-white overflow-hidden"
-        >
-          <img
-            ref="imageRef"
-            src="../assets/images/head-shot/notion-face-cap-transparent.png"
-            alt="James"
-            class="size-50 object-contain absolute top-0 left-0"
-          />
-          <img
-            ref="image404Ref"
-            src="../assets/images/head-shot/notion-face-cap-404-transparent.png"
-            alt="Developer"
-            class="size-50 object-contain absolute top-0 left-0 opacity-0"
-          />
-        </div>
-        <!-- 文字容器，這裡將放置兩個重疊的文本 -->
-        <div class="relative flex items-center h-8 w-32 overflow-hidden">
-          <h1
-            ref="jamesTextRef"
-            class="text-3xl font-bold absolute text-center w-full"
-          >
-            JAMES
-          </h1>
-          <h1
-            ref="devTextRef"
-            class="text-3xl font-bold absolute text-center w-full opacity-0"
-          >
-            DEVELOPER
-          </h1>
-        </div>
-      </div>
-
-      <!-- Skill Icons -->
-      <img
-        v-for="(icon, name) in skillIcons"
-        :key="`skill-${name}`"
-        :src="icon.src"
-        :alt="name"
-        :class="`absolute size-16 object-contain ${icon.position}`"
-        ref="skillIconRefs"
-      />
-
-      <!-- Social Media Icons -->
-      <img
-        v-for="(icon, name) in socialIcons"
-        :key="`social-${name}`"
-        :src="icon.src"
-        :alt="name"
-        :class="`absolute size-24 object-contain ${icon.position}`"
-        ref="socialIconRefs"
-      />
-
-      <!-- 向下滚动指示 -->
-      <div
-        ref="scrollIndicatorRef"
-        class="absolute bottom-8 flex flex-col items-center gap-2"
-      >
-        <img
-          :src="icons.arrowDown"
-          alt="Scroll Down"
-          class="w-8 h-8 animate-bounce"
-        />
-        <span class="text-sm font-semibold">scroll down</span>
-      </div>
+      <CenterContent ref="centerContentRef" />
+      <Icons ref="iconsRef" />
+      <ScrollIndicator ref="scrollIndicatorRef" />
     </div>
 
-    <!-- 創建一個內容塊，用於生成滾動條和触发效果 -->
     <div class="h-[200vh]" ref="scrollContent">
-      <!-- 第一屏空白區域 -->
       <div class="h-screen"></div>
-      <!-- 第二屏空白區域 -->
       <div class="h-screen"></div>
     </div>
   </div>
@@ -100,112 +21,64 @@
 import { onMounted, ref } from "vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { logos, socials } from "../constants/image";
-import arrowDown from "../assets/images/icons/logos/arrow-down.svg";
+import Background from "../components/home/Background.vue";
+import CenterContent from "../components/home/CenterContent.vue";
+import Icons from "../components/home/Icons.vue";
+import ScrollIndicator from "../components/home/ScrollIndicator.vue";
 
-// 注册ScrollTrigger插件
+// 定義組件類型
+interface BackgroundComponent {
+  bgRef: HTMLElement;
+}
+
+interface CenterContentComponent {
+  iAmTextRef: HTMLElement;
+  jamesTextRef: HTMLElement;
+  devTextRef: HTMLElement;
+  imageRef: HTMLElement;
+  image404Ref: HTMLElement;
+}
+
+interface IconsComponent {
+  socialIconRefs: HTMLElement[];
+  skillIconRefs: HTMLElement[];
+}
+
+interface ScrollIndicatorComponent {
+  scrollIndicatorRef: HTMLElement;
+}
+
+// 註冊ScrollTrigger插件
 gsap.registerPlugin(ScrollTrigger);
 
-const icons = {
-  arrowDown,
-};
-
-// Skill Icons 位置資訊
-const skillIcons = {
-  html: {
-    src: logos.html,
-    position: "md:top-[50%] md:right-[10%] top-[20%] right-[5%]",
-  },
-  css: {
-    src: logos.css,
-    position: "md:top-[20%] md:right-[15%] top-[10%] right-[10%]",
-  },
-  javascript: {
-    src: logos.javascript,
-    position: "md:bottom-[60%] md:left-[20%] bottom-[40%] left-[5%]",
-  },
-  typescript: {
-    src: logos.typescript,
-    position: "md:top-[20%] md:left-[55%] top-[10%] left-[50%]",
-  },
-  react: {
-    src: logos.react,
-    position: "md:top-[20%] md:left-[40%] top-[20%] left-[10%]",
-  },
-  vue: {
-    src: logos.vue,
-    position: "md:bottom-[20%] md:right-[40%] bottom-[15%] right-[32%]",
-  },
-  nuxt: {
-    src: logos.nuxt,
-    position: "md:top-[15%] md:left-[15%] top-[5%] left-[10%]",
-  },
-  next: {
-    src: logos.next,
-    position: "md:bottom-[20%] md:right-[30%] bottom-[20%] right-[15%]",
-  },
-  tailwindcss: {
-    src: logos.tailwindcss,
-    position: "md:top-[10%] md:right-[25%] top-[25%] right-[20%]",
-  },
-  vite: {
-    src: logos.vite,
-    position: "md:bottom-[25%] md:left-[30%] bottom-[15%] left-[25%]",
-  },
-  docker: {
-    src: logos.docker,
-    position: "md:top-[50%] md:left-[10%] top-[40%] left-[5%]",
-  },
-  pinia: {
-    src: logos.pinia,
-    position: "md:bottom-[15%] md:left-[40%] bottom-[10%] left-[35%]",
-  },
-};
-
-// Social Icons 位置資訊
-const socialIcons = {
-  github: {
-    src: socials.github,
-    position: "md:top-[25%] md:left-[30%] top-[20%] left-[25%]",
-  },
-  instagram: {
-    src: socials.instgram,
-    position: "md:bottom-[30%] md:left-[15%] bottom-[20%] left-[10%]",
-  },
-  figma: {
-    src: socials.figma,
-    position: "md:top-[30%] md:right-[30%] top-[35%] right-[5%]",
-  },
-  medium: {
-    src: socials.medium,
-    position: "md:top-[70%] md:right-[10%] top-[60%] right-[5%]",
-  },
-};
-
 // 建立參考
-const skillIconRefs = ref([]);
-const socialIconRefs = ref([]);
-const bgRef = ref(null);
-const jamesTextRef = ref(null);
-const devTextRef = ref(null);
-const scrollContainer = ref(null);
-const scrollContent = ref(null);
-const iAmTextRef = ref(null);
-const scrollIndicatorRef = ref(null);
-const imageRef = ref(null);
-const image404Ref = ref(null);
+const scrollContainer = ref<HTMLElement | null>(null);
+const scrollContent = ref<HTMLElement | null>(null);
+const backgroundRef = ref<BackgroundComponent | null>(null);
+const centerContentRef = ref<CenterContentComponent | null>(null);
+const iconsRef = ref<IconsComponent | null>(null);
+const scrollIndicatorRef = ref<ScrollIndicatorComponent | null>(null);
 
 onMounted(() => {
-  // 取得所有icon元素
-  const allIcons = [...skillIconRefs.value, ...socialIconRefs.value];
+  if (!iconsRef.value) return;
 
-  // 設定初始位置（在螢幕上方）
-  gsap.set(allIcons, {
+  // 取得所有icon元素
+  const allSocialIcons = [...iconsRef.value.socialIconRefs];
+  const allSkillIcons = [...iconsRef.value.skillIconRefs];
+
+  // 設定初始位置 - 社交圖標從上方掉落
+  gsap.set(allSocialIcons, {
     y: -100,
     opacity: 0,
   });
 
-  // 動畫時間線
+  // 技能圖標初始隱藏
+  gsap.set(allSkillIcons, {
+    opacity: 0,
+    scale: 0.5,
+  });
+
+  // 動畫時間線 - 只有社交圖標有初始動畫
   const tl = gsap.timeline({
     defaults: {
       duration: 1.5,
@@ -213,8 +86,8 @@ onMounted(() => {
     },
   });
 
-  // 添加圖標掉落動畫，隨機時間錯開
-  allIcons.forEach((icon) => {
+  // 添加社交圖標掉落動畫，隨機時間錯開
+  allSocialIcons.forEach((icon) => {
     tl.to(
       icon,
       {
@@ -226,20 +99,20 @@ onMounted(() => {
     );
   });
 
-  // 设置滚动触发动画
+  // 設置滾動觸發動畫
   if (scrollContainer.value && scrollContent.value) {
-    // 直接使用window作为滚动容器以确保可以正常滚动
+    // 直接使用window作為滾動容器以確保可以正常滾動
     ScrollTrigger.create({
       trigger: scrollContent.value,
       start: "top top",
       end: "bottom bottom",
-      scrub: true, // 确保滚动效果平滑
+      scrub: true, // 確保滾動效果平滑
       onUpdate: (self) => {
         const progress = self.progress;
 
-        // 背景颜色过渡 - 从白色到橙色
-        if (bgRef.value) {
-          const element = bgRef.value as HTMLElement;
+        // 背景顏色過渡 - 從白色到橙色
+        if (backgroundRef.value) {
+          const element = backgroundRef.value.bgRef;
           const redValue = 255;
           const greenValue = Math.max(255 - Math.round(progress * 100), 130);
           const blueValue = Math.max(255 - Math.round(progress * 220), 0);
@@ -247,19 +120,19 @@ onMounted(() => {
           element.style.backgroundColor = `rgb(${redValue}, ${greenValue}, ${blueValue})`;
         }
 
-        // 图像过渡效果
-        if (imageRef.value && image404Ref.value) {
-          const normalImage = imageRef.value as HTMLElement;
-          const image404 = image404Ref.value as HTMLElement;
+        // 圖像過渡效果
+        if (centerContentRef.value) {
+          const normalImage = centerContentRef.value.imageRef;
+          const image404 = centerContentRef.value.image404Ref;
 
           normalImage.style.opacity = `${1 - progress}`;
           image404.style.opacity = `${progress}`;
         }
 
         // 文字切換效果
-        if (jamesTextRef.value && devTextRef.value) {
-          const jamesText = jamesTextRef.value as HTMLElement;
-          const devText = devTextRef.value as HTMLElement;
+        if (centerContentRef.value) {
+          const jamesText = centerContentRef.value.jamesTextRef;
+          const devText = centerContentRef.value.devTextRef;
 
           jamesText.style.opacity = `${1 - progress}`;
           jamesText.style.transform = `translateY(${-50 * progress}px)`;
@@ -268,21 +141,45 @@ onMounted(() => {
           devText.style.transform = `translateY(${50 - 50 * progress}px)`;
         }
 
-        // 文字顏色變化 - 从黑色到白色
-        const textElements = [
-          iAmTextRef.value,
-          jamesTextRef.value,
-          devTextRef.value,
-          scrollIndicatorRef.value,
-        ];
-
-        textElements.forEach((element) => {
-          if (element) {
-            const el = element as HTMLElement;
-            const colorValue = Math.min(Math.round(255 * progress), 255);
-            el.style.color = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+        // 技能圖標顯示效果 - 隨著滾動逐漸顯示
+        allSkillIcons.forEach((icon) => {
+          if (icon) {
+            const el = icon as HTMLElement;
+            // 只有當progress超過0.1後才開始顯示
+            const iconOpacity = progress < 0.1 ? 0 : Math.min(progress * 2, 1);
+            const iconScale = 0.5 + progress * 0.5;
+            el.style.opacity = `${iconOpacity}`;
+            el.style.transform = `scale(${iconScale})`;
           }
         });
+
+        // 社交圖標隱藏效果 - 隨著滾動逐漸隱藏
+        allSocialIcons.forEach((icon) => {
+          if (icon) {
+            const el = icon as HTMLElement;
+            // 隨著滾動進度增加，社交圖標逐漸隱藏
+            const iconOpacity = Math.max(1 - progress * 2, 0);
+            el.style.opacity = `${iconOpacity}`;
+          }
+        });
+
+        // 文字顏色變化 - 從黑色到白色
+        if (centerContentRef.value && scrollIndicatorRef.value) {
+          const textElements = [
+            centerContentRef.value.iAmTextRef,
+            centerContentRef.value.jamesTextRef,
+            centerContentRef.value.devTextRef,
+            scrollIndicatorRef.value.scrollIndicatorRef,
+          ];
+
+          textElements.forEach((element) => {
+            if (element) {
+              const el = element as HTMLElement;
+              const colorValue = Math.min(Math.round(255 * progress), 255);
+              el.style.color = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+            }
+          });
+        }
       },
     });
   }
