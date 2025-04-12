@@ -140,7 +140,7 @@ onMounted(() => {
       onUpdate: (self) => {
         const progress = self.progress;
 
-        // 背景顏色過渡 - 從白色到琥珀色 amber-500
+        // 背景顏色過渡 - 從白色到藍色 blue-500
         // 背景顏色過渡在 0-20% 的滾動範圍內完成
         const colorProgress = Math.min(progress * 5, 1);
         if (backgroundRef.value) {
@@ -149,10 +149,10 @@ onMounted(() => {
           let greenValue = 255;
           let blueValue = 255;
 
-          // 白色到琥珀色 amber-500 (rgb(245, 158, 11))
-          redValue = 255 - Math.round(10 * colorProgress);
-          greenValue = 255 - Math.round(97 * colorProgress);
-          blueValue = 255 - Math.round(244 * colorProgress);
+          // 白色到藍色 blue-500 (rgb(59, 130, 246))
+          redValue = 255 - Math.round((255 - 59) * colorProgress);
+          greenValue = 255 - Math.round((255 - 130) * colorProgress);
+          blueValue = 255 - Math.round((255 - 246) * colorProgress);
 
           element.style.backgroundColor = `rgb(${redValue}, ${greenValue}, ${blueValue})`;
         }
@@ -189,8 +189,18 @@ onMounted(() => {
             const iconOpacity = Math.min(iconProgress, 1);
             const iconScale = 0.5 + 0.5 * Math.min(iconProgress, 1);
 
-            el.style.opacity = `${iconOpacity}`;
-            el.style.transform = `scale(${iconScale})`;
+            // 當滾動超過50%時，開始縮小並消失
+            if (progress > 0.5) {
+              const fadeOutProgress = (progress - 0.5) * 2; // 0.5-1.0 映射到 0-1
+              const fadeOutOpacity = Math.max(1 - fadeOutProgress, 0);
+              const fadeOutScale = Math.max(1 - fadeOutProgress * 0.8, 0.2);
+
+              el.style.opacity = `${fadeOutOpacity * iconOpacity}`;
+              el.style.transform = `scale(${fadeOutScale * iconScale})`;
+            } else {
+              el.style.opacity = `${iconOpacity}`;
+              el.style.transform = `scale(${iconScale})`;
+            }
           }
         });
 
@@ -226,7 +236,7 @@ onMounted(() => {
 
   // 工作經歷部分的動畫 - 只保留背景顏色過渡
   if (workSectionRef.value) {
-    // 背景顏色過渡 - 從琥珀色 amber-500 到橙色 orange-500
+    // 背景顏色過渡 - 從藍色 blue-500 到琥珀色 amber-500
     ScrollTrigger.create({
       trigger: workSectionRef.value,
       start: "top bottom",
@@ -237,10 +247,10 @@ onMounted(() => {
 
         if (backgroundRef.value) {
           const element = backgroundRef.value.bgRef;
-          // 琥珀色 amber-500 (rgb(245, 158, 11)) 到橙色 orange-500 (rgb(249, 115, 22))
-          const redValue = 245 + Math.round(4 * progress);
-          const greenValue = 158 - Math.round(43 * progress);
-          const blueValue = 11 + Math.round(11 * progress);
+          // 藍色 blue-500 (rgb(59, 130, 246)) 到琥珀色 amber-500 (rgb(245, 158, 11))
+          const redValue = 59 + Math.round((245 - 59) * progress);
+          const greenValue = 130 + Math.round((158 - 130) * progress);
+          const blueValue = 246 - Math.round((246 - 11) * progress);
 
           element.style.backgroundColor = `rgb(${redValue}, ${greenValue}, ${blueValue})`;
         }
