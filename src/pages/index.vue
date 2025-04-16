@@ -49,7 +49,8 @@ interface CenterContentComponent {
 
 interface IconsComponent {
   socialIconRefs: HTMLElement[];
-  skillIconRefs: HTMLElement[];
+  skillIconsLeftWrapperRef: HTMLElement;
+  skillIconsRightWrapperRef: HTMLElement;
 }
 
 interface ScrollIndicatorComponent {
@@ -81,7 +82,8 @@ onMounted(() => {
 
   // 取得所有icon元素
   const allSocialIcons = [...iconsRef.value.socialIconRefs];
-  const allSkillIcons = [...iconsRef.value.skillIconRefs];
+  const skillIconsLeftWrapper = iconsRef.value.skillIconsLeftWrapperRef;
+  const skillIconsRightWrapper = iconsRef.value.skillIconsRightWrapperRef;
 
   // 設定初始位置 - 社交圖標從上方掉落
   gsap.set(allSocialIcons, {
@@ -89,10 +91,9 @@ onMounted(() => {
     opacity: 0,
   });
 
-  // 技能圖標初始隱藏
-  gsap.set(allSkillIcons, {
+  // 技能圖標初始隱藏但不影响位置
+  gsap.set([skillIconsLeftWrapper, skillIconsRightWrapper], {
     opacity: 0,
-    scale: 0.5,
   });
 
   // 設置初始狀態 - DEVELOPER 文字和 404 Cap 初始隱藏
@@ -126,6 +127,56 @@ onMounted(() => {
       },
       Math.random() * 0.5
     );
+  });
+
+  // 創建左側技能圖標向下滾動動畫
+  // 獲取左側圖標組的父元素
+  const leftIconGroups =
+    skillIconsLeftWrapper.querySelectorAll(".flex.flex-col");
+  const leftFirstGroup = leftIconGroups[0] as HTMLElement;
+  const leftGroupHeight = leftFirstGroup.offsetHeight;
+
+  // 對於左側向下滾動，設置初始位置為負值，讓第一組在視口外，第二組在視口內
+  gsap.set(skillIconsLeftWrapper, { y: -leftGroupHeight });
+
+  // 建立左側無限循環動畫
+  gsap.to(skillIconsLeftWrapper, {
+    y: "+=" + leftGroupHeight, // 向下滾動一個組的高度
+    duration: 20,
+    ease: "none",
+    repeat: -1,
+    modifiers: {
+      y: (y) => {
+        // 當y值超過預設範圍時，立即重置到初始位置
+        const currentY = parseFloat(y);
+        return (currentY % (leftGroupHeight * 2)) - leftGroupHeight + "px";
+      },
+    },
+  });
+
+  // 創建右側技能圖標向上滾動動畫
+  const rightIconGroups =
+    skillIconsRightWrapper.querySelectorAll(".flex.flex-col");
+  const rightFirstGroup = rightIconGroups[0] as HTMLElement;
+  const rightGroupHeight = rightFirstGroup.offsetHeight;
+
+  // 對於右側向上滾動，設置初始位置為0
+  gsap.set(skillIconsRightWrapper, { y: 0 });
+
+  // 建立右側無限循環動畫
+  gsap.to(skillIconsRightWrapper, {
+    y: "-=" + rightGroupHeight, // 向上滾動一個組的高度
+    duration: 20,
+    ease: "none",
+    repeat: -1,
+    modifiers: {
+      y: (y) => {
+        // 當y值超過預設範圍時，立即重置
+        const currentY = parseFloat(y);
+        const mod = currentY % (rightGroupHeight * 2);
+        return mod + "px";
+      },
+    },
   });
 
   // 设置第一屏固定效果
@@ -180,29 +231,32 @@ onMounted(() => {
           devText.style.transform = `translateY(${50 - 50 * textProgress}px)`;
         }
 
-        // 技能圖標顯示效果 - 在 5-25% 的滾動範圍內完成
-        allSkillIcons.forEach((icon) => {
-          if (icon) {
-            const el = icon as HTMLElement;
-            // 技能圖標在稍後開始出現
-            const iconProgress = Math.max(0, progress - 0.05) * 5;
-            const iconOpacity = Math.min(iconProgress, 1);
-            const iconScale = 0.5 + 0.5 * Math.min(iconProgress, 1);
+        // 技能图标显示控制 - 只控制透明度，不影响滑动
+        if (skillIconsLeftWrapper && skillIconsRightWrapper) {
+          let opacity = 0;
 
-            // 當滾動超過50%時，開始縮小並消失
-            if (progress > 0.5) {
-              const fadeOutProgress = (progress - 0.5) * 2; // 0.5-1.0 映射到 0-1
-              const fadeOutOpacity = Math.max(1 - fadeOutProgress, 0);
-              const fadeOutScale = Math.max(1 - fadeOutProgress * 0.8, 0.2);
-
-              el.style.opacity = `${fadeOutOpacity * iconOpacity}`;
-              el.style.transform = `scale(${fadeOutScale * iconScale})`;
-            } else {
-              el.style.opacity = `${iconOpacity}`;
-              el.style.transform = `scale(${iconScale})`;
-            }
+          // 入场淡入效果 (0.15 - 0.25)
+          if (progress > 0.15 && progress <= 0.25) {
+            // 计算0.15到0.25范围内的不透明度 (0-1)
+            opacity = (progress - 0.15) * 10;
           }
-        });
+          // 完全显示状态 (0.25 - 0.6)
+          else if (progress > 0.25 && progress <= 0.6) {
+            opacity = 1;
+          }
+          // 退场淡出效果 (0.6 - 0.7)
+          else if (progress > 0.6 && progress < 0.7) {
+            // 计算0.6到0.7范围内的不透明度 (1-0)
+            opacity = 1 - (progress - 0.6) * 10;
+          }
+
+          // 只更新透明度，不影响y位置
+          gsap.to([skillIconsLeftWrapper, skillIconsRightWrapper], {
+            opacity: opacity,
+            duration: 0.2,
+            overwrite: "auto",
+          });
+        }
 
         // 社交圖標隱藏效果 - 在 0-25% 的滾動範圍內完成
         allSocialIcons.forEach((icon) => {
