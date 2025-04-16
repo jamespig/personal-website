@@ -30,9 +30,9 @@ import { onMounted, ref } from "vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Background from "../components/home/Background.vue";
-import CenterContent from "../components/home/CenterContent.vue";
-import SocialIcons from "../components/home/SocialIcons.vue";
-import SkillIcons from "../components/home/SkillIcons.vue";
+import CenterContent from "../components/home/introduction/CenterContent.vue";
+import SocialIcons from "../components/home/introduction/SocialIcons.vue";
+import SkillIcons from "../components/home/introduction/SkillIcons.vue";
 import ScrollIndicator from "../components/home/ScrollIndicator.vue";
 import WorkExperience from "../components/home/WorkExperience.vue";
 

@@ -16,7 +16,7 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import { socials } from "../../constants/image";
+import { socials } from "../../../constants/image";
 
 // 社交图标位置信息
 const socialIcons = {

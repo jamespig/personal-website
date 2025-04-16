@@ -113,7 +113,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
 import { gsap } from "gsap";
-import { logos } from "../../constants/image";
+import { logos } from "../../../constants/image";
 
 // 所有技能圖標
 const allSkillIcons = {

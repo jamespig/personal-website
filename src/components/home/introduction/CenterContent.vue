@@ -33,13 +33,13 @@
       <div class="invisible h-12 md:h-auto">JAMES</div>
       <h1
         ref="jamesTextRef"
-        class="text-3xl md:text-9xl font-bold absolute text-center w-full left-0"
+        class="text-3xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-bold absolute text-center w-full left-0"
       >
         JAMES
       </h1>
       <h1
         ref="devTextRef"
-        class="text-3xl md:text-9xl font-bold absolute text-center w-full opacity-0 left-0"
+        class="text-3xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-bold absolute text-center w-full opacity-0 left-0"
       >
         DEVELOPER
       </h1>
@@ -49,8 +49,8 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import CapHeadShot from "../../assets/images/head-shot/notion-face-cap-transparent.png";
-import CapHeadShot404 from "../../assets/images/head-shot/notion-face-cap-404-transparent.png";
+import CapHeadShot from "../../../assets/images/head-shot/notion-face-cap-transparent.png";
+import CapHeadShot404 from "../../../assets/images/head-shot/notion-face-cap-404-transparent.png";
 
 const iAmTextRef = ref(null);
 const jamesTextRef = ref(null);
