@@ -1,18 +1,26 @@
 <template>
   <div class="h-screen w-full" ref="scrollContainer">
+    <!-- 固定背景區域，會隨滾動變色 -->
     <Background ref="backgroundRef" />
 
-    <div
-      class="fixed top-0 left-0 w-full h-screen grid grid-cols-[minmax(300px,800px)_1fr] md:grid-cols-[0.5fr_minmax(300px,600px)_2fr] grid-rows-[1fr_auto_1fr]"
-    >
-      <CenterContent ref="centerContentRef" />
-      <Icons ref="iconsRef" />
-      <ScrollIndicator ref="scrollIndicatorRef" />
-    </div>
+    <!-- 創建一個內容塊，用於生成滾動條和触发效果 -->
+    <div class="relative" ref="scrollContent">
+      <!-- 第一屏 - 個人介紹區域 -->
+      <div ref="firstSectionRef" class="h-screen">
+        <div
+          class="fixed top-0 left-0 w-full h-screen grid grid-cols-[minmax(300px,800px)_1fr] md:grid-cols-[0.5fr_minmax(300px,600px)_2fr] grid-rows-[1fr_auto_1fr]"
+        >
+          <CenterContent ref="centerContentRef" />
+          <SocialIcons ref="socialIconsRef" />
+          <SkillIcons ref="skillIconsRef" />
+          <ScrollIndicator ref="scrollIndicatorRef" />
+        </div>
+      </div>
 
-    <div class="h-[200vh]" ref="scrollContent">
-      <div class="h-screen"></div>
-      <div class="h-screen"></div>
+      <!-- 第二屏 - 工作經歷區域 -->
+      <div ref="workSectionRef">
+        <WorkExperience ref="workExperienceRef" />
+      </div>
     </div>
   </div>
 </template>
@@ -23,8 +31,10 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Background from "../components/home/Background.vue";
 import CenterContent from "../components/home/CenterContent.vue";
-import Icons from "../components/home/Icons.vue";
+import SocialIcons from "../components/home/SocialIcons.vue";
+import SkillIcons from "../components/home/SkillIcons.vue";
 import ScrollIndicator from "../components/home/ScrollIndicator.vue";
+import WorkExperience from "../components/home/WorkExperience.vue";
 
 // 定義組件類型
 interface BackgroundComponent {
@@ -39,13 +49,23 @@ interface CenterContentComponent {
   image404Ref: HTMLElement;
 }
 
-interface IconsComponent {
+interface SocialIconsComponent {
   socialIconRefs: HTMLElement[];
-  skillIconRefs: HTMLElement[];
+}
+
+interface SkillIconsComponent {
+  skillIconsLeftWrapperRef: HTMLElement;
+  skillIconsRightWrapperRef: HTMLElement;
 }
 
 interface ScrollIndicatorComponent {
   scrollIndicatorRef: HTMLElement;
+}
+
+interface WorkExperienceComponent {
+  avatarContainerRef: HTMLElement;
+  dialogRef: HTMLElement;
+  experienceRef: HTMLElement;
 }
 
 // 註冊ScrollTrigger插件
@@ -54,17 +74,20 @@ gsap.registerPlugin(ScrollTrigger);
 // 建立參考
 const scrollContainer = ref<HTMLElement | null>(null);
 const scrollContent = ref<HTMLElement | null>(null);
+const firstSectionRef = ref<HTMLElement | null>(null);
+const workSectionRef = ref<HTMLElement | null>(null);
 const backgroundRef = ref<BackgroundComponent | null>(null);
 const centerContentRef = ref<CenterContentComponent | null>(null);
-const iconsRef = ref<IconsComponent | null>(null);
+const socialIconsRef = ref<SocialIconsComponent | null>(null);
+const skillIconsRef = ref<SkillIconsComponent | null>(null);
 const scrollIndicatorRef = ref<ScrollIndicatorComponent | null>(null);
+const workExperienceRef = ref<WorkExperienceComponent | null>(null);
 
 onMounted(() => {
-  if (!iconsRef.value) return;
+  if (!socialIconsRef.value) return;
 
-  // 取得所有icon元素
-  const allSocialIcons = [...iconsRef.value.socialIconRefs];
-  const allSkillIcons = [...iconsRef.value.skillIconRefs];
+  // 取得所有social icon元素
+  const allSocialIcons = [...socialIconsRef.value.socialIconRefs];
 
   // 設定初始位置 - 社交圖標從上方掉落
   gsap.set(allSocialIcons, {
@@ -72,11 +95,30 @@ onMounted(() => {
     opacity: 0,
   });
 
-  // 技能圖標初始隱藏
-  gsap.set(allSkillIcons, {
-    opacity: 0,
-    scale: 0.5,
-  });
+  // 技能圖標初始隱藏但不影响位置
+  if (skillIconsRef.value) {
+    gsap.set(
+      [
+        skillIconsRef.value.skillIconsLeftWrapperRef,
+        skillIconsRef.value.skillIconsRightWrapperRef,
+      ],
+      {
+        opacity: 0,
+      }
+    );
+  }
+
+  // 設置初始狀態 - DEVELOPER 文字和 404 Cap 初始隱藏
+  if (centerContentRef.value) {
+    gsap.set(centerContentRef.value.devTextRef, {
+      opacity: 0,
+      y: 50,
+    });
+
+    gsap.set(centerContentRef.value.image404Ref, {
+      opacity: 0,
+    });
+  }
 
   // 動畫時間線 - 只有社交圖標有初始動畫
   const tl = gsap.timeline({
@@ -93,77 +135,103 @@ onMounted(() => {
       {
         y: 0,
         opacity: 1,
-        delay: Math.random() * 0.5, // 隨機延遲，創造錯落感
+        delay: Math.random() * 0.5,
       },
-      Math.random() * 0.5 // 在時間線上隨機位置開始
+      Math.random() * 0.5
     );
   });
 
-  // 設置滾動觸發動畫
-  if (scrollContainer.value && scrollContent.value) {
-    // 直接使用window作為滾動容器以確保可以正常滾動
+  // 设置第一屏固定效果
+  if (firstSectionRef.value) {
     ScrollTrigger.create({
-      trigger: scrollContent.value,
+      trigger: firstSectionRef.value,
       start: "top top",
-      end: "bottom bottom",
-      scrub: true, // 確保滾動效果平滑
+      end: "bottom+=50% top", // 增加固定效果的持續時間
+      pin: true,
+      pinSpacing: true,
+      scrub: true,
       onUpdate: (self) => {
         const progress = self.progress;
 
-        // 背景顏色過渡 - 從白色到橙色
+        // 背景顏色過渡 - 從白色到藍色 blue-500
+        // 背景顏色過渡在 0-20% 的滾動範圍內完成
+        const colorProgress = Math.min(progress * 5, 1);
         if (backgroundRef.value) {
           const element = backgroundRef.value.bgRef;
-          const redValue = 255;
-          const greenValue = Math.max(255 - Math.round(progress * 100), 130);
-          const blueValue = Math.max(255 - Math.round(progress * 220), 0);
+          let redValue = 255;
+          let greenValue = 255;
+          let blueValue = 255;
+
+          // 白色到藍色 blue-500 (rgb(59, 130, 246))
+          redValue = 255 - Math.round((255 - 59) * colorProgress);
+          greenValue = 255 - Math.round((255 - 130) * colorProgress);
+          blueValue = 255 - Math.round((255 - 246) * colorProgress);
 
           element.style.backgroundColor = `rgb(${redValue}, ${greenValue}, ${blueValue})`;
         }
 
-        // 圖像過渡效果
+        // 圖像過渡效果 - 在 0-15% 的滾動範圍內完成
         if (centerContentRef.value) {
           const normalImage = centerContentRef.value.imageRef;
           const image404 = centerContentRef.value.image404Ref;
 
-          normalImage.style.opacity = `${1 - progress}`;
-          image404.style.opacity = `${progress}`;
+          const imageProgress = Math.min(progress * 6, 1);
+          normalImage.style.opacity = `${1 - imageProgress}`;
+          image404.style.opacity = `${imageProgress}`;
         }
 
-        // 文字切換效果
+        // 文字切換效果 - 在 0-15% 的滾動範圍內完成
         if (centerContentRef.value) {
           const jamesText = centerContentRef.value.jamesTextRef;
           const devText = centerContentRef.value.devTextRef;
 
-          jamesText.style.opacity = `${1 - progress}`;
-          jamesText.style.transform = `translateY(${-50 * progress}px)`;
+          const textProgress = Math.min(progress * 6, 1);
+          jamesText.style.opacity = `${1 - textProgress}`;
+          jamesText.style.transform = `translateY(${-50 * textProgress}px)`;
 
-          devText.style.opacity = `${progress}`;
-          devText.style.transform = `translateY(${50 - 50 * progress}px)`;
+          devText.style.opacity = `${textProgress}`;
+          devText.style.transform = `translateY(${50 - 50 * textProgress}px)`;
         }
 
-        // 技能圖標顯示效果 - 隨著滾動逐漸顯示
-        allSkillIcons.forEach((icon) => {
-          if (icon) {
-            const el = icon as HTMLElement;
-            // 只有當progress超過0.1後才開始顯示
-            const iconOpacity = progress < 0.1 ? 0 : Math.min(progress * 2, 1);
-            const iconScale = 0.5 + progress * 0.5;
-            el.style.opacity = `${iconOpacity}`;
-            el.style.transform = `scale(${iconScale})`;
-          }
-        });
+        // 技能图标显示控制 - 只控制透明度，不影响滑动
+        if (skillIconsRef.value) {
+          const { skillIconsLeftWrapperRef, skillIconsRightWrapperRef } =
+            skillIconsRef.value;
+          let opacity = 0;
 
-        // 社交圖標隱藏效果 - 隨著滾動逐漸隱藏
+          // 入场淡入效果 (0.15 - 0.25)
+          if (progress > 0.15 && progress <= 0.25) {
+            // 计算0.15到0.25范围内的不透明度 (0-1)
+            opacity = (progress - 0.15) * 10;
+          }
+          // 完全显示状态 (0.25 - 0.6)
+          else if (progress > 0.25 && progress <= 0.6) {
+            opacity = 1;
+          }
+          // 退场淡出效果 (0.6 - 0.7)
+          else if (progress > 0.6 && progress < 0.7) {
+            // 计算0.6到0.7范围内的不透明度 (1-0)
+            opacity = 1 - (progress - 0.6) * 10;
+          }
+
+          // 只更新透明度，不影响y位置
+          gsap.to([skillIconsLeftWrapperRef, skillIconsRightWrapperRef], {
+            opacity: opacity,
+            duration: 0.2,
+            overwrite: "auto",
+          });
+        }
+
+        // 社交圖標隱藏效果 - 在 0-25% 的滾動範圍內完成
         allSocialIcons.forEach((icon) => {
           if (icon) {
             const el = icon as HTMLElement;
-            // 隨著滾動進度增加，社交圖標逐漸隱藏
-            const iconOpacity = Math.max(1 - progress * 2, 0);
+            const iconOpacity = Math.max(1 - progress * 4, 0);
             el.style.opacity = `${iconOpacity}`;
           }
         });
 
-        // 文字顏色變化 - 從黑色到白色
+        // 文字顏色變化 - 從黑色到白色 - 在 0-20% 的滾動範圍內完成
         if (centerContentRef.value && scrollIndicatorRef.value) {
           const textElements = [
             centerContentRef.value.iAmTextRef,
@@ -175,10 +243,34 @@ onMounted(() => {
           textElements.forEach((element) => {
             if (element) {
               const el = element as HTMLElement;
-              const colorValue = Math.min(Math.round(255 * progress), 255);
+              const colorValue = Math.min(Math.round(255 * colorProgress), 255);
               el.style.color = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
             }
           });
+        }
+      },
+    });
+  }
+
+  // 工作經歷部分的動畫 - 只保留背景顏色過渡
+  if (workSectionRef.value) {
+    // 背景顏色過渡 - 從藍色 blue-500 到琥珀色 amber-500
+    ScrollTrigger.create({
+      trigger: workSectionRef.value,
+      start: "top bottom",
+      end: "top center",
+      scrub: true,
+      onUpdate: (self) => {
+        const progress = self.progress;
+
+        if (backgroundRef.value) {
+          const element = backgroundRef.value.bgRef;
+          // 藍色 blue-500 (rgb(59, 130, 246)) 到琥珀色 amber-500 (rgb(245, 158, 11))
+          const redValue = 59 + Math.round((245 - 59) * progress);
+          const greenValue = 130 + Math.round((158 - 130) * progress);
+          const blueValue = 246 - Math.round((246 - 11) * progress);
+
+          element.style.backgroundColor = `rgb(${redValue}, ${greenValue}, ${blueValue})`;
         }
       },
     });
