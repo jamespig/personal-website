@@ -11,7 +11,8 @@
           class="fixed top-0 left-0 w-full h-screen grid grid-cols-[minmax(300px,800px)_1fr] md:grid-cols-[0.5fr_minmax(300px,600px)_2fr] grid-rows-[1fr_auto_1fr]"
         >
           <CenterContent ref="centerContentRef" />
-          <Icons ref="iconsRef" />
+          <SocialIcons ref="socialIconsRef" />
+          <SkillIcons ref="skillIconsRef" />
           <ScrollIndicator ref="scrollIndicatorRef" />
         </div>
       </div>
@@ -30,7 +31,8 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Background from "../components/home/Background.vue";
 import CenterContent from "../components/home/CenterContent.vue";
-import Icons from "../components/home/Icons.vue";
+import SocialIcons from "../components/home/SocialIcons.vue";
+import SkillIcons from "../components/home/SkillIcons.vue";
 import ScrollIndicator from "../components/home/ScrollIndicator.vue";
 import WorkExperience from "../components/home/WorkExperience.vue";
 
@@ -47,8 +49,11 @@ interface CenterContentComponent {
   image404Ref: HTMLElement;
 }
 
-interface IconsComponent {
+interface SocialIconsComponent {
   socialIconRefs: HTMLElement[];
+}
+
+interface SkillIconsComponent {
   skillIconsLeftWrapperRef: HTMLElement;
   skillIconsRightWrapperRef: HTMLElement;
 }
@@ -73,17 +78,16 @@ const firstSectionRef = ref<HTMLElement | null>(null);
 const workSectionRef = ref<HTMLElement | null>(null);
 const backgroundRef = ref<BackgroundComponent | null>(null);
 const centerContentRef = ref<CenterContentComponent | null>(null);
-const iconsRef = ref<IconsComponent | null>(null);
+const socialIconsRef = ref<SocialIconsComponent | null>(null);
+const skillIconsRef = ref<SkillIconsComponent | null>(null);
 const scrollIndicatorRef = ref<ScrollIndicatorComponent | null>(null);
 const workExperienceRef = ref<WorkExperienceComponent | null>(null);
 
 onMounted(() => {
-  if (!iconsRef.value) return;
+  if (!socialIconsRef.value) return;
 
-  // 取得所有icon元素
-  const allSocialIcons = [...iconsRef.value.socialIconRefs];
-  const skillIconsLeftWrapper = iconsRef.value.skillIconsLeftWrapperRef;
-  const skillIconsRightWrapper = iconsRef.value.skillIconsRightWrapperRef;
+  // 取得所有social icon元素
+  const allSocialIcons = [...socialIconsRef.value.socialIconRefs];
 
   // 設定初始位置 - 社交圖標從上方掉落
   gsap.set(allSocialIcons, {
@@ -92,9 +96,17 @@ onMounted(() => {
   });
 
   // 技能圖標初始隱藏但不影响位置
-  gsap.set([skillIconsLeftWrapper, skillIconsRightWrapper], {
-    opacity: 0,
-  });
+  if (skillIconsRef.value) {
+    gsap.set(
+      [
+        skillIconsRef.value.skillIconsLeftWrapperRef,
+        skillIconsRef.value.skillIconsRightWrapperRef,
+      ],
+      {
+        opacity: 0,
+      }
+    );
+  }
 
   // 設置初始狀態 - DEVELOPER 文字和 404 Cap 初始隱藏
   if (centerContentRef.value) {
@@ -127,56 +139,6 @@ onMounted(() => {
       },
       Math.random() * 0.5
     );
-  });
-
-  // 創建左側技能圖標向下滾動動畫
-  // 獲取左側圖標組的父元素
-  const leftIconGroups =
-    skillIconsLeftWrapper.querySelectorAll(".flex.flex-col");
-  const leftFirstGroup = leftIconGroups[0] as HTMLElement;
-  const leftGroupHeight = leftFirstGroup.offsetHeight;
-
-  // 對於左側向下滾動，設置初始位置為負值，讓第一組在視口外，第二組在視口內
-  gsap.set(skillIconsLeftWrapper, { y: -leftGroupHeight });
-
-  // 建立左側無限循環動畫
-  gsap.to(skillIconsLeftWrapper, {
-    y: "+=" + leftGroupHeight, // 向下滾動一個組的高度
-    duration: 20,
-    ease: "none",
-    repeat: -1,
-    modifiers: {
-      y: (y) => {
-        // 當y值超過預設範圍時，立即重置到初始位置
-        const currentY = parseFloat(y);
-        return (currentY % (leftGroupHeight * 2)) - leftGroupHeight + "px";
-      },
-    },
-  });
-
-  // 創建右側技能圖標向上滾動動畫
-  const rightIconGroups =
-    skillIconsRightWrapper.querySelectorAll(".flex.flex-col");
-  const rightFirstGroup = rightIconGroups[0] as HTMLElement;
-  const rightGroupHeight = rightFirstGroup.offsetHeight;
-
-  // 對於右側向上滾動，設置初始位置為0
-  gsap.set(skillIconsRightWrapper, { y: 0 });
-
-  // 建立右側無限循環動畫
-  gsap.to(skillIconsRightWrapper, {
-    y: "-=" + rightGroupHeight, // 向上滾動一個組的高度
-    duration: 20,
-    ease: "none",
-    repeat: -1,
-    modifiers: {
-      y: (y) => {
-        // 當y值超過預設範圍時，立即重置
-        const currentY = parseFloat(y);
-        const mod = currentY % (rightGroupHeight * 2);
-        return mod + "px";
-      },
-    },
   });
 
   // 设置第一屏固定效果
@@ -232,7 +194,9 @@ onMounted(() => {
         }
 
         // 技能图标显示控制 - 只控制透明度，不影响滑动
-        if (skillIconsLeftWrapper && skillIconsRightWrapper) {
+        if (skillIconsRef.value) {
+          const { skillIconsLeftWrapperRef, skillIconsRightWrapperRef } =
+            skillIconsRef.value;
           let opacity = 0;
 
           // 入场淡入效果 (0.15 - 0.25)
@@ -251,7 +215,7 @@ onMounted(() => {
           }
 
           // 只更新透明度，不影响y位置
-          gsap.to([skillIconsLeftWrapper, skillIconsRightWrapper], {
+          gsap.to([skillIconsLeftWrapperRef, skillIconsRightWrapperRef], {
             opacity: opacity,
             duration: 0.2,
             overwrite: "auto",

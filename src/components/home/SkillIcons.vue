@@ -107,26 +107,15 @@
         </div>
       </div>
     </div>
-
-    <!-- 社交媒体图标 -->
-    <div class="grid grid-cols-12 grid-rows-12 w-full h-full">
-      <img
-        v-for="(icon, name) in socialIcons"
-        :key="`social-${name}`"
-        :src="icon.src"
-        :alt="name"
-        :class="`social-icon w-full h-auto object-contain ${icon.position} ${icon.backgroundColor} p-2`"
-        ref="socialIconRefs"
-      />
-    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
-import { logos, socials } from "../../constants/image";
+import { ref, onMounted } from "vue";
+import { gsap } from "gsap";
+import { logos } from "../../constants/image";
 
-// 將所有技能圖標放在一起
+// 所有技能圖標
 const allSkillIcons = {
   typescript: { src: logos.typescript },
   react: { src: logos.react },
@@ -138,37 +127,72 @@ const allSkillIcons = {
   docker: { src: logos.docker },
 };
 
-// 社交图标位置信息
-const socialIcons = {
-  github: {
-    src: socials.github,
-    position: "col-start-2 col-end-3 row-start-2 row-end-3",
-    backgroundColor: "bg-blue-500",
-  },
-  instagram: {
-    src: socials.instgram,
-    position: "col-start-2 col-end-3 row-start-9 row-end-10",
-    backgroundColor: "bg-blue-500",
-  },
-  figma: {
-    src: socials.figma,
-    position: "col-start-10 col-end-11 row-start-5 row-end-6",
-    backgroundColor: "bg-blue-500",
-  },
-  medium: {
-    src: socials.medium,
-    position: "col-start-10 col-end-12 row-start-9 row-end-11",
-    backgroundColor: "bg-blue-500",
-  },
-};
-
-const socialIconRefs = ref([]);
 const skillIconsLeftWrapperRef = ref(null);
 const skillIconsRightWrapperRef = ref(null);
 
+// 設置動畫
+onMounted(() => {
+  const leftWrapper = skillIconsLeftWrapperRef.value;
+  const rightWrapper = skillIconsRightWrapperRef.value;
+
+  if (!leftWrapper || !rightWrapper) return;
+
+  // 使用類型斷言來處理DOM操作
+  // 創建左側技能圖標向下滾動動畫
+  // 獲取左側圖標組的父元素
+  const leftIconGroups = (leftWrapper as HTMLElement).querySelectorAll(
+    ".flex.flex-col"
+  );
+  const leftFirstGroup = leftIconGroups[0] as HTMLElement;
+  const leftGroupHeight = leftFirstGroup.offsetHeight;
+
+  // 對於左側向下滾動，設置初始位置為負值，讓第一組在視口外，第二組在視口內
+  gsap.set(leftWrapper, { y: -leftGroupHeight });
+
+  // 建立左側無限循環動畫
+  gsap.to(leftWrapper, {
+    y: "+=" + leftGroupHeight, // 向下滾動一個組的高度
+    duration: 20,
+    ease: "none",
+    repeat: -1,
+    modifiers: {
+      y: (y) => {
+        // 當y值超過預設範圍時，立即重置到初始位置
+        const currentY = parseFloat(y);
+        return (currentY % (leftGroupHeight * 2)) - leftGroupHeight + "px";
+      },
+    },
+  });
+
+  // 創建右側技能圖標向上滾動動畫
+  const rightIconGroups = (rightWrapper as HTMLElement).querySelectorAll(
+    ".flex.flex-col"
+  );
+  const rightFirstGroup = rightIconGroups[0] as HTMLElement;
+  const rightGroupHeight = rightFirstGroup.offsetHeight;
+
+  // 對於右側向上滾動，設置初始位置為0
+  gsap.set(rightWrapper, { y: 0 });
+
+  // 建立右側無限循環動畫
+  gsap.to(rightWrapper, {
+    y: "-=" + rightGroupHeight, // 向上滾動一個組的高度
+    duration: 20,
+    ease: "none",
+    repeat: -1,
+    modifiers: {
+      y: (y) => {
+        // 當y值超過預設範圍時，立即重置
+        const currentY = parseFloat(y);
+        const mod = currentY % (rightGroupHeight * 2);
+        return mod + "px";
+      },
+    },
+  });
+});
+
 // 暴露组件引用
 defineExpose({
-  socialIconRefs,
   skillIconsLeftWrapperRef,
   skillIconsRightWrapperRef,
 });
@@ -189,8 +213,7 @@ defineExpose({
 }
 
 @media (max-width: 767px) {
-  .skill-icon,
-  .social-icon {
+  .skill-icon {
     display: none !important;
   }
 }
