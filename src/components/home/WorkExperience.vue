@@ -5,7 +5,7 @@
     >
       <!-- 標題 -->
       <div
-        class="md:col-start-1 md:col-span-6 md:row-start-1 md:row-span-3 bg-black text-white p-4 shadow-2xl"
+        class="md:col-start-1 md:col-span-6 md:row-start-1 md:row-span-6 bg-black text-white p-4 shadow-2xl"
       >
         <h1
           class="text-3xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-bold"
