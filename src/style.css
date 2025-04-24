@@ -17,7 +17,7 @@
   --color-chia-red-light: #ffcece;
 }
 
-/* 自定义滚动条样式 */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -30,7 +30,7 @@
   background: black;
 }
 
-/* 隐藏滚动条按钮 */
+/* Hide Scrollbar Buttons */
 ::-webkit-scrollbar-button {
   display: none;
 }
