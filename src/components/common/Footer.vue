@@ -1,7 +1,10 @@
 <template>
   <footer class="bg-black flex flex-col gap-2 p-6">
     <header class="flex justify-end items-center px-2 py-4">
-      <button class="bg-white rounded-lg px-2 py-4">
+      <button
+        class="bg-white rounded-lg px-2 py-4 cursor-pointer"
+        @click="scrollToTop"
+      >
         <ArrowUp :size="30" :stroke-width="2" />
       </button>
     </header>
@@ -19,6 +22,13 @@
 <script lang="ts" setup>
 import jamespig from "../../assets/images/imagery/Jamespig.svg";
 import { ArrowUp } from "lucide-vue-next";
+
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
 </script>
 
 <style lang="scss" scoped></style>
