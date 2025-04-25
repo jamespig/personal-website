@@ -3,7 +3,7 @@
     <header class="flex flex-row justify-between items-center">
       <h1 class="text-3xl font-bold text-black">Social Media</h1>
     </header>
-    <main class="flex flex-row gap-2 overflow-x-auto py-2">
+    <main class="flex flex-row gap-2 overflow-x-auto py-2 rounded-lg">
       <div class="flex flex-col gap-1 p-4 bg-[#C837AB] shadow-2xl h-fit">
         <h2 class="text-2xl font-bold text-[#FFDD55]">Instagram</h2>
         <hr class="border-[#FFDD55]" />
