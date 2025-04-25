@@ -1,108 +1,231 @@
 <template>
-  <section class="flex flex-col px-8 py-6 gap-6 bg-[#BE4938] rounded-lg">
-    <header class="flex flex-row justify-between items-center">
-      <h1 class="text-3xl font-bold text-black">Social Media</h1>
-    </header>
-    <main class="flex flex-row gap-2 overflow-x-auto py-2 rounded-lg">
-      <div class="flex flex-col gap-1 p-4 bg-[#C837AB] shadow-2xl h-fit">
-        <h2 class="text-2xl font-bold text-[#FFDD55]">Instagram</h2>
-        <hr class="border-[#FFDD55]" />
-        <a
-          href="https://www.instagram.com/jamespig3303/"
-          target="_blank"
-          class="text-xs text-[#FFDD55]"
+  <VueLenis
+    :root="false"
+    :options="{
+      orientation: 'horizontal',
+      gestureOrientation: 'horizontal',
+      smoothWheel: true,
+      lerp: 0.07,
+      duration: 0.8,
+    }"
+    ref="lenis"
+    @scroll="onScroll"
+  >
+    <section class="flex flex-col px-8 py-6 gap-6 bg-[#BE4938] rounded-lg">
+      <header class="flex flex-row justify-between items-center">
+        <h1 class="text-3xl font-bold text-black">Social Media</h1>
+        <div class="flex gap-2">
+          <button
+            @click="scrollToPrevCard"
+            class="bg-black rounded-lg px-4 py-2 cursor-pointer"
+          >
+            <ArrowLeft color="white" :size="30" :stroke-width="2" />
+          </button>
+          <button
+            @click="scrollToNextCard"
+            class="bg-black rounded-lg px-4 py-2 cursor-pointer"
+          >
+            <ArrowRight color="white" :size="30" :stroke-width="2" />
+          </button>
+        </div>
+      </header>
+      <main
+        ref="cardContainer"
+        class="flex flex-row gap-2 overflow-x-auto py-2 rounded-lg"
+      >
+        <!-- IG Card -->
+        <div
+          class="social-card flex flex-col gap-1 p-4 bg-[#C837AB] shadow-lg h-fit"
         >
-          https://www.instagram.com/jamespig3303/
-        </a>
-        <hr class="border-[#FFDD55]" />
-        <p class="text-base font-bold text-[#FFDD55]">
-          Record life moments and artwork
-        </p>
-      </div>
-      <div class="flex flex-col gap-1 p-4 bg-[#FAF03A] shadow-2xl h-fit">
-        <h2 class="text-2xl font-bold text-black">CV</h2>
-        <hr class="border-black" />
-        <a
-          href="https://www.cake.me/james-pig"
-          target="_blank"
-          class="text-xs text-black"
+          <h2 class="text-2xl font-bold text-[#FFDD55]">Instagram</h2>
+          <hr class="border-[#FFDD55]" />
+          <a
+            href="https://www.instagram.com/jamespig3303/"
+            target="_blank"
+            class="text-xs text-[#FFDD55]"
+          >
+            https://www.instagram.com/jamespig3303/
+          </a>
+          <hr class="border-[#FFDD55]" />
+          <p class="text-base font-bold text-[#FFDD55]">
+            Record life moments and artwork
+          </p>
+        </div>
+        <!-- CV Card -->
+        <div
+          class="social-card flex flex-col gap-1 p-4 bg-[#FAF03A] shadow-lg h-fit"
         >
-          https://www.cake.me/james-pig
-        </a>
-        <a
-          href="https://www.linkedin.com/in/jamespig/"
-          target="_blank"
-          class="text-xs text-black"
+          <h2 class="text-2xl font-bold text-black">CV</h2>
+          <hr class="border-black" />
+          <a
+            href="https://www.cake.me/james-pig"
+            target="_blank"
+            class="text-xs text-black"
+          >
+            https://www.cake.me/james-pig
+          </a>
+          <a
+            href="https://www.linkedin.com/in/jamespig/"
+            target="_blank"
+            class="text-xs text-black"
+          >
+            https://www.linkedin.com/in/jamespig/
+          </a>
+          <hr class="border-black" />
+          <p class="text-base font-bold text-black">
+            I put all my work experience there!
+          </p>
+        </div>
+        <!-- Medium Card -->
+        <div
+          class="social-card flex flex-col gap-1 p-4 bg-black shadow-lg h-fit"
         >
-          https://www.linkedin.com/in/jamespig/
-        </a>
-        <hr class="border-black" />
-        <p class="text-base font-bold text-black">
-          I put all my work experience there!
-        </p>
-      </div>
-      <div class="flex flex-col gap-1 p-4 bg-black shadow-2xl h-fit">
-        <h2 class="text-2xl font-bold text-white">Medium</h2>
-        <hr class="border-white" />
-        <a
-          href="https://medium.com/@james-pig"
-          target="_blank"
-          class="text-xs text-white"
+          <h2 class="text-2xl font-bold text-white">Medium</h2>
+          <hr class="border-white" />
+          <a
+            href="https://medium.com/@james-pig"
+            target="_blank"
+            class="text-xs text-white"
+          >
+            https://medium.com/@james-pig
+          </a>
+          <hr class="border-white" />
+          <p class="text-base font-bold text-white">
+            Self-improvement technical articles
+          </p>
+        </div>
+        <!-- GitHub Card -->
+        <div
+          class="social-card flex flex-col gap-1 p-4 bg-black shadow-lg h-fit"
         >
-          https://medium.com/@james-pig
-        </a>
-        <hr class="border-white" />
-        <p class="text-base font-bold text-white">
-          Self-improvement technical articles
-        </p>
-      </div>
-      <div class="flex flex-col gap-1 p-4 bg-black shadow-2xl h-fit">
-        <h2 class="text-2xl font-bold text-white">GitHub</h2>
-        <hr class="border-white" />
-        <a
-          href="https://github.com/jamespig"
-          target="_blank"
-          class="text-xs text-white"
+          <h2 class="text-2xl font-bold text-white">GitHub</h2>
+          <hr class="border-white" />
+          <a
+            href="https://github.com/jamespig"
+            target="_blank"
+            class="text-xs text-white"
+          >
+            https://github.com/jamespig
+          </a>
+          <hr class="border-white" />
+          <p class="text-base font-bold text-white">
+            Self-improvement technical articles
+          </p>
+        </div>
+        <!-- Gmail Card -->
+        <div
+          class="social-card flex flex-col gap-1 p-4 bg-white shadow-lg h-fit"
         >
-          https://github.com/jamespig
-        </a>
-        <hr class="border-white" />
-        <p class="text-base font-bold text-white">
-          Self-improvement technical articles
-        </p>
-      </div>
-      <div class="flex flex-col gap-1 p-4 bg-white shadow-2xl h-fit">
-        <h2 class="text-2xl font-bold text-[#FB2C36]">Gmail</h2>
-        <hr class="border-[#FB2C36]" />
-        <a
-          href="mailto:james7766646@gmail.com"
-          target="_blank"
-          class="text-xs text-[#FB2C36]"
+          <h2 class="text-2xl font-bold text-[#FB2C36]">Gmail</h2>
+          <hr class="border-[#FB2C36]" />
+          <a
+            href="mailto:james7766646@gmail.com"
+            target="_blank"
+            class="text-xs text-[#FB2C36]"
+          >
+            james7766646@gmail.com
+          </a>
+          <hr class="border-[#FB2C36]" />
+          <p class="text-base font-bold text-[#FB2C36]">Just Email.</p>
+        </div>
+        <!-- Figma Card -->
+        <div
+          class="social-card flex flex-col gap-1 p-4 bg-[#FF7262] shadow-lg h-fit"
         >
-          james7766646@gmail.com
-        </a>
-        <hr class="border-[#FB2C36]" />
-        <p class="text-base font-bold text-[#FB2C36]">Just Email.</p>
-      </div>
-      <div class="flex flex-col gap-1 p-4 bg-[#FF7262] shadow-2xl h-fit">
-        <h2 class="text-2xl font-bold text-[#F24E1E]">Figma</h2>
-        <hr class="border-[#F24E1E]" />
-        <a
-          href="https://www.figma.com/design/eb4MuRbaLRfsNVunJDuDYs/Personal?node-id=15-2&t=E4VtCJdUALMgYQKs-1"
-          target="_blank"
-          class="text-xs text-[#F24E1E]"
-        >
-          https://www.figma.com/design/personal-website
-        </a>
-        <hr class="border-[#F24E1E]" />
-        <p class="text-base font-bold text-[#F24E1E]">
-          Personal website design draft
-        </p>
-      </div>
-    </main>
-  </section>
+          <h2 class="text-2xl font-bold text-[#F24E1E]">Figma</h2>
+          <hr class="border-[#F24E1E]" />
+          <a
+            href="https://www.figma.com/design/eb4MuRbaLRfsNVunJDuDYs/Personal?node-id=15-2&t=E4VtCJdUALMgYQKs-1"
+            target="_blank"
+            class="text-xs text-[#F24E1E]"
+          >
+            https://www.figma.com/design/personal-website
+          </a>
+          <hr class="border-[#F24E1E]" />
+          <p class="text-base font-bold text-[#F24E1E]">
+            Personal website design draft
+          </p>
+        </div>
+      </main>
+    </section>
+  </VueLenis>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { ArrowRight, ArrowLeft } from "lucide-vue-next";
+import { ref } from "vue";
+import { gsap } from "gsap";
+// @ts-ignore
+import { VueLenis } from "lenis/vue";
 
-<style lang="scss" scoped></style>
+const cardContainer = ref<HTMLElement | null>(null);
+const currentCardIndex = ref(0);
+
+// 滾動到下一個卡片
+const scrollToNextCard = () => {
+  if (!cardContainer.value) return;
+
+  const cards = cardContainer.value.querySelectorAll(".social-card");
+
+  if (currentCardIndex.value < cards.length - 1) {
+    currentCardIndex.value++;
+  } else {
+    currentCardIndex.value = 0;
+  }
+
+  scrollToCard(currentCardIndex.value);
+};
+
+// 滾動到上一個卡片
+const scrollToPrevCard = () => {
+  if (!cardContainer.value) return;
+
+  const cards = cardContainer.value.querySelectorAll(".social-card");
+
+  if (currentCardIndex.value > 0) {
+    currentCardIndex.value--;
+  } else {
+    currentCardIndex.value = cards.length - 1;
+  }
+
+  scrollToCard(currentCardIndex.value);
+};
+
+// 滾動到指定卡片
+const scrollToCard = (index: number) => {
+  if (!cardContainer.value) return;
+
+  const cards = cardContainer.value.querySelectorAll(".social-card");
+  if (index < 0 || index >= cards.length) return;
+
+  const targetCard = cards[index] as HTMLElement;
+
+  // 使用GSAP實現更流暢的滾動
+  gsap.to(cardContainer.value, {
+    duration: 0.5, // 降低持續時間
+    scrollLeft: targetCard.offsetLeft,
+    ease: "power1.out", // 使用更平滑的緩動函數
+  });
+};
+
+// Lenis滾動事件處理（空函數，僅為了保持接口一致）
+const onScroll = () => {};
+</script>
+
+<style lang="css" scoped>
+main {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  scroll-behavior: smooth;
+  position: relative;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory; /* 添加滾動捕捉 */
+}
+
+.social-card {
+  scroll-snap-align: start; /* 卡片捕捉對齊 */
+}
+</style>
