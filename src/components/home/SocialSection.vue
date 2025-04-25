@@ -182,6 +182,19 @@ onMounted(() => {
 const updateButtonStates = () => {
   if (!cardContainer.value) return;
 
+  // 檢查是否所有卡片都可見（容器寬度足夠顯示所有卡片）
+  const containerWidth = cardContainer.value.clientWidth;
+  const scrollWidth = cardContainer.value.scrollWidth;
+
+  // 如果所有卡片都可見
+  if (containerWidth >= scrollWidth - 10) {
+    // 使用索引來判斷按鈕狀態
+    isAtLeftEdge.value = currentCardIndex.value === 0;
+    isAtRightEdge.value = currentCardIndex.value === totalCards.value - 1;
+    return;
+  }
+
+  // 否則使用滾動位置判斷
   // 檢查是否在左邊界
   isAtLeftEdge.value = cardContainer.value.scrollLeft <= 10;
 
