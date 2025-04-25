@@ -1,10 +1,12 @@
 <template>
   <div class="min-h-screen bg-black">
     <Header />
-    <main>
-      <RouterView />
-    </main>
-    <Footer />
+    <VueLenis root>
+      <main>
+        <RouterView />
+      </main>
+      <Footer />
+    </VueLenis>
   </div>
 </template>
 
@@ -12,6 +14,7 @@
 import { RouterView } from "vue-router";
 import Header from "./components/common/Header.vue";
 import Footer from "./components/common/Footer.vue";
+import { VueLenis } from "lenis/vue";
 </script>
 
 <style scoped></style>

@@ -41,43 +41,50 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const articleRef = ref<HTMLElement | null>(null);
-let animationElements: HTMLElement[] = [];
 let scrollTrigger: any = null;
+let tl: gsap.core.Timeline | null = null;
 
 onMounted(() => {
   if (!articleRef.value) return;
 
-  // Collect all elements with the animation-item class
-  animationElements = Array.from(
+  // 创建一个timeline实例
+  tl = gsap.timeline({ paused: true });
+
+  // 获取所有animation-item元素
+  const animationElements = Array.from(
     articleRef.value.querySelectorAll(".animation-item")
   ) as HTMLElement[];
 
-  // Create a main ScrollTrigger
+  // 将所有动画添加到timeline中
+  animationElements.forEach((el) => {
+    tl!.to(
+      el,
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.7,
+        ease: "power2.out",
+      },
+      "<+=0.15"
+    ); // 每个动画比前一个晚0.15秒开始
+  });
+
+  // 创建ScrollTrigger控制timeline的播放
   scrollTrigger = ScrollTrigger.create({
     trigger: articleRef.value,
     start: "top 80%",
-    onEnter: () => animateElements(true),
-    onLeaveBack: () => animateElements(false),
+    onEnter: () => tl!.play(),
+    onLeaveBack: () => tl!.reverse(),
   });
 });
 
-// Animation function
-const animateElements = (show: boolean) => {
-  animationElements.forEach((el, index) => {
-    gsap.to(el, {
-      y: show ? 0 : 30,
-      opacity: show ? 1 : 0,
-      duration: show ? 0.7 : 0.5,
-      delay: show ? index * 0.15 : 0,
-      ease: show ? "power2.out" : "power2.in",
-    });
-  });
-};
-
 onUnmounted(() => {
-  // 清理ScrollTrigger实例
+  // 清理ScrollTrigger和timeline实例
   if (scrollTrigger) {
     scrollTrigger.kill();
+  }
+  if (tl) {
+    tl.kill();
   }
 });
 </script>
