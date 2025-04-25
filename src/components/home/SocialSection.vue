@@ -17,13 +17,17 @@
         <div class="flex gap-2">
           <button
             @click="scrollToPrevCard"
+            :disabled="isAtLeftEdge"
             class="bg-black rounded-lg px-4 py-2 cursor-pointer"
+            :class="{ 'opacity-50': isAtLeftEdge }"
           >
             <ArrowLeft color="white" :size="30" :stroke-width="2" />
           </button>
           <button
             @click="scrollToNextCard"
+            :disabled="isAtRightEdge"
             class="bg-black rounded-lg px-4 py-2 cursor-pointer"
+            :class="{ 'opacity-50': isAtRightEdge }"
           >
             <ArrowRight color="white" :size="30" :stroke-width="2" />
           </button>
@@ -153,41 +157,53 @@
 
 <script lang="ts" setup>
 import { ArrowRight, ArrowLeft } from "lucide-vue-next";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { gsap } from "gsap";
 // @ts-ignore
 import { VueLenis } from "lenis/vue";
 
+const lenis = ref(null);
 const cardContainer = ref<HTMLElement | null>(null);
 const currentCardIndex = ref(0);
+const totalCards = ref(0);
+const isAtLeftEdge = ref(true);
+const isAtRightEdge = ref(false);
+
+// 初始化時計算卡片總數並更新按鈕狀態
+onMounted(() => {
+  if (cardContainer.value) {
+    totalCards.value =
+      cardContainer.value.querySelectorAll(".social-card").length;
+    updateButtonStates();
+  }
+});
+
+// 更新按鈕禁用狀態
+const updateButtonStates = () => {
+  if (!cardContainer.value) return;
+
+  // 檢查是否在左邊界
+  isAtLeftEdge.value = cardContainer.value.scrollLeft <= 10;
+
+  // 檢查是否在右邊界
+  const maxScrollLeft =
+    cardContainer.value.scrollWidth - cardContainer.value.clientWidth;
+  isAtRightEdge.value = cardContainer.value.scrollLeft >= maxScrollLeft - 10;
+};
 
 // 滾動到下一個卡片
 const scrollToNextCard = () => {
-  if (!cardContainer.value) return;
+  if (!cardContainer.value || isAtRightEdge.value) return;
 
-  const cards = cardContainer.value.querySelectorAll(".social-card");
-
-  if (currentCardIndex.value < cards.length - 1) {
-    currentCardIndex.value++;
-  } else {
-    currentCardIndex.value = 0;
-  }
-
+  currentCardIndex.value++;
   scrollToCard(currentCardIndex.value);
 };
 
 // 滾動到上一個卡片
 const scrollToPrevCard = () => {
-  if (!cardContainer.value) return;
+  if (!cardContainer.value || isAtLeftEdge.value) return;
 
-  const cards = cardContainer.value.querySelectorAll(".social-card");
-
-  if (currentCardIndex.value > 0) {
-    currentCardIndex.value--;
-  } else {
-    currentCardIndex.value = cards.length - 1;
-  }
-
+  currentCardIndex.value--;
   scrollToCard(currentCardIndex.value);
 };
 
@@ -205,11 +221,26 @@ const scrollToCard = (index: number) => {
     duration: 0.5, // 降低持續時間
     scrollLeft: targetCard.offsetLeft,
     ease: "power1.out", // 使用更平滑的緩動函數
+    onComplete: updateButtonStates, // 滾動完成後更新按鈕狀態
   });
 };
 
-// Lenis滾動事件處理（空函數，僅為了保持接口一致）
-const onScroll = () => {};
+// Lenis滾動事件處理
+const onScroll = () => {
+  if (cardContainer.value) {
+    updateButtonStates();
+
+    // 更新當前卡片索引（可選，用於保持索引同步）
+    const cards = cardContainer.value.querySelectorAll(".social-card");
+    for (let i = 0; i < cards.length; i++) {
+      const card = cards[i] as HTMLElement;
+      if (card.offsetLeft >= cardContainer.value.scrollLeft) {
+        currentCardIndex.value = i;
+        break;
+      }
+    }
+  }
+};
 </script>
 
 <style lang="css" scoped>
