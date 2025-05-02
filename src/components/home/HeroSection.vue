@@ -13,7 +13,7 @@
           transform: 'translate(10%, -50%)',
         }"
       >
-        Drag
+        I'm Frontend Developer
       </p>
     </div>
   </section>
