@@ -113,7 +113,7 @@
           </a>
           <hr class="border-white" />
           <p class="text-base font-bold text-white">
-            Self-improvement technical articles
+            I have proof of my work...
           </p>
         </div>
         <!-- Gmail Card -->
