@@ -1,23 +1,79 @@
 <template>
   <div
-    class="flex flex-col justify-center items-center min-h-screen bg-[#6E163C] px-6 py-4"
+    class="flex flex-col min-h-screen px-6 py-24 relative overflow-hidden bg-[#6E163C]"
   >
-    <img
-      :src="portfolio"
-      loading="lazy"
-      alt="portfolio"
-      class="w-auto h-45 mb-6"
-    />
-    <div class="flex flex-col gap-2">
-      <ProjectCard :project="chiaProject" />
-      <ProjectCard :project="relistProject" />
+    <div
+      ref="bgImageContainer"
+      class="absolute inset-0 w-full h-full z-0 flex justify-center items-center overflow-hidden"
+    >
+      <img
+        :src="portfolio"
+        ref="portfolioImage"
+        loading="lazy"
+        alt="portfolio"
+        class="w-full h-auto object-cover opacity-60"
+      />
+    </div>
+    <div class="relative z-10 flex flex-col items-center">
+      <div class="flex flex-col gap-2">
+        <ProjectCard :project="chiaProject" />
+        <ProjectCard :project="relistProject" />
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { ref, onMounted, onUnmounted } from "vue";
 import portfolio from "../../assets/images/imagery/Portfolio.svg";
 import ProjectCard from "../../components/portfolio/ProjectCard.vue";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Lenis from "lenis";
+
+// register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
+
+const portfolioImage = ref<HTMLImageElement | null>(null);
+const bgImageContainer = ref<HTMLDivElement | null>(null);
+let lenis: Lenis | null = null;
+
+// initialize smooth scrolling and parallax effect
+onMounted(() => {
+  // use Lenis to implement smooth scrolling
+  lenis = new Lenis({
+    duration: 1.2,
+    easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    orientation: "vertical",
+    smoothWheel: true,
+  });
+
+  // update function
+  function raf(time: number) {
+    lenis && lenis.raf(time);
+    requestAnimationFrame(raf);
+  }
+  requestAnimationFrame(raf);
+
+  // GSAP parallax effect
+  gsap.to(portfolioImage.value, {
+    yPercent: 30,
+    ease: "none",
+    scrollTrigger: {
+      trigger: bgImageContainer.value,
+      start: "top top",
+      end: "bottom top",
+      scrub: true,
+    },
+  });
+});
+
+// resource cleanup
+onUnmounted(() => {
+  if (lenis) {
+    lenis.destroy();
+  }
+});
 
 // Project data
 const chiaProject = {
