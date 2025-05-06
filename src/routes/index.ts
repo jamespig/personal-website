@@ -11,6 +11,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import("../pages/index.vue"),
     meta: { title: "Homepage-JamesPig" },
   },
+  {
+    path: "/portfolio",
+    name: "portfolio",
+    component: () => import("../pages/portfolio/index.vue"),
+    meta: { title: "My Portfolio-JamesPig" },
+  },
 ];
 
 const router = createRouter({
