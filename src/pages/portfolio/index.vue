@@ -94,10 +94,10 @@ const chiaProject = {
     "Liff",
   ],
   whatIDid: [
-    "1. Built the frontend of Chia's two core systems from scratch.",
-    "2. Established design and UI/UX guidelines to ensure consistency across products.",
-    "3. Introduced modular development, separating logic and presentation to reduce code coupling and improve maintainability.",
-    "4. Actively provided feedback on product UI and features to modernize the user experience and help the product better address user pain points.",
+    "1. Built front-end from scratch using Nuxt 3 with SSR and CSR hybrid rendering.",
+    "2. Implemented route-based authentication via Nuxt Middleware.",
+    "3. Defined UI/UX design system and component library, modularized code to reduce coupling.",
+    "4. Provided modern UI/UX suggestions focused on pain-point solutions.",
   ],
 };
 
@@ -115,11 +115,11 @@ const relistProject = {
     "Lingui",
   ],
   whatIDid: [
-    "1. Developed the Landing Page.",
-    "2. Standardized the frontend team's codebase to reduce redundancy and avoid reinventing the wheel.",
-    "3. Conducted code reviews to ensure code quality and consistency.",
-    "4. Organized and participated in study groups for technical knowledge sharing.",
-    "5. Lead the development of the Discover Page, collaborating closely with PMs and designers to evaluate implementation feasibility.",
+    "1. Developed features using React and ecosystem tools.",
+    "2. Led Code Reviews and organized Study Groups to foster team growth.",
+    "3. Spearheaded the implementation of the Explore page, collaborating with PMs and designers to decompose tasks.",
+    "4. Designed caching and refresh strategies with TanStack Query; implemented lazy loading for images and content to optimize performance.",
+    "5. Customized scroll restoration logic to enhance user experience when data updates occur.",
   ],
 };
 </script>

@@ -66,8 +66,8 @@ defineProps<{
 }>();
 
 // State
-const isTechStackOpen = ref(false);
-const isWhatIDidOpen = ref(false);
+const isTechStackOpen = ref(true);
+const isWhatIDidOpen = ref(true);
 
 // DOM references
 const techStackChevron = ref<HTMLElement | null>(null);
@@ -80,10 +80,18 @@ const animationDuration = 0.4;
 
 // Initialization
 onMounted(() => {
-  if (techStackContent.value && whatIDidContent.value) {
-    // set collapsed
-    gsap.set(techStackContent.value, { height: 0, autoAlpha: 0 });
-    gsap.set(whatIDidContent.value, { height: 0, autoAlpha: 0 });
+  if (
+    techStackContent.value &&
+    whatIDidContent.value &&
+    techStackChevron.value &&
+    whatIDidChevron.value
+  ) {
+    // set expanded by default
+    gsap.set(techStackContent.value, { height: "auto", autoAlpha: 1 });
+    gsap.set(whatIDidContent.value, { height: "auto", autoAlpha: 1 });
+    // set chevrons to rotated state
+    gsap.set(techStackChevron.value, { rotation: 180 });
+    gsap.set(whatIDidChevron.value, { rotation: 180 });
   }
 });
 

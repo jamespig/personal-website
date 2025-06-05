@@ -39,7 +39,7 @@
       >
         <!-- IG Card -->
         <div
-          class="social-card flex flex-col gap-1 p-4 bg-[#C837AB] shadow-lg h-fit"
+          class="social-card flex flex-col gap-1 p-4 bg-[#C837AB] shadow-lg h-fit min-w-fit"
         >
           <h2 class="text-2xl font-bold text-[#FFDD55]">Instagram</h2>
           <hr class="border-[#FFDD55]" />
@@ -55,25 +55,57 @@
             Record life moments and artwork
           </p>
         </div>
+        <!-- LinkedIn Card -->
+        <div
+          class="social-card flex flex-col gap-1 p-4 bg-[#2B7FFF] shadow-lg h-fit min-w-fit"
+        >
+          <h2 class="text-2xl font-bold text-white">LinkedIn</h2>
+          <hr class="border-white" />
+          <a
+            href="https://www.linkedin.com/in/jamespig/"
+            target="_blank"
+            class="text-xs text-white"
+          >
+            https://www.linkedin.com/in/jamespig/
+          </a>
+          <hr class="border-white" />
+          <p class="text-base font-bold text-white">
+            Professional profile and work experience
+          </p>
+        </div>
         <!-- CV Card -->
         <div
-          class="social-card flex flex-col gap-1 p-4 bg-[#FAF03A] shadow-lg h-fit"
+          class="social-card flex flex-col gap-1 p-4 bg-[#FAF03A] shadow-lg h-fit min-w-fit"
         >
           <h2 class="text-2xl font-bold text-black">CV</h2>
           <hr class="border-black" />
           <a
-            href="https://www.cake.me/james-pig"
+            href="https://drive.google.com/file/d/166A3sTyPYo6hwBq_4AG3TdRgJDb9eeco/view?usp=sharing"
             target="_blank"
             class="text-xs text-black"
           >
-            https://www.cake.me/james-pig
+            Chinese CV
           </a>
           <a
-            href="https://www.linkedin.com/in/jamespig/"
+            href="https://drive.google.com/file/d/1ZEJWRcT3QFLGbfMIfIqnPunaOCZ9UgDY/view?usp=sharing"
             target="_blank"
             class="text-xs text-black"
           >
-            https://www.linkedin.com/in/jamespig/
+            English CV
+          </a>
+          <a
+            href="https://drive.google.com/file/d/1ZluMeV5AHZn_tELM_CyoPud4SN5VPAxF/view?usp=sharing"
+            target="_blank"
+            class="text-xs text-black"
+          >
+            Chinese Autobiography
+          </a>
+          <a
+            href="https://drive.google.com/file/d/1axM4s3pNi3TnALN8tqrPCN4RtiXrIlIC/view?usp=sharing"
+            target="_blank"
+            class="text-xs text-black"
+          >
+            English Autobiography
           </a>
           <hr class="border-black" />
           <p class="text-base font-bold text-black">
@@ -82,7 +114,7 @@
         </div>
         <!-- Medium Card -->
         <div
-          class="social-card flex flex-col gap-1 p-4 bg-black shadow-lg h-fit"
+          class="social-card flex flex-col gap-1 p-4 bg-black shadow-lg h-fit min-w-fit"
         >
           <h2 class="text-2xl font-bold text-white">Medium</h2>
           <hr class="border-white" />
@@ -100,7 +132,7 @@
         </div>
         <!-- GitHub Card -->
         <div
-          class="social-card flex flex-col gap-1 p-4 bg-black shadow-lg h-fit"
+          class="social-card flex flex-col gap-1 p-4 bg-black shadow-lg h-fit min-w-fit"
         >
           <h2 class="text-2xl font-bold text-white">GitHub</h2>
           <hr class="border-white" />
@@ -118,7 +150,7 @@
         </div>
         <!-- Gmail Card -->
         <div
-          class="social-card flex flex-col gap-1 p-4 bg-white shadow-lg h-fit"
+          class="social-card flex flex-col gap-1 p-4 bg-white shadow-lg h-fit min-w-fit"
         >
           <h2 class="text-2xl font-bold text-[#FB2C36]">Gmail</h2>
           <hr class="border-[#FB2C36]" />
@@ -134,7 +166,7 @@
         </div>
         <!-- Figma Card -->
         <div
-          class="social-card flex flex-col gap-1 p-4 bg-[#FF7262] shadow-lg h-fit"
+          class="social-card flex flex-col gap-1 p-4 bg-[#FF7262] shadow-lg h-fit min-w-fit"
         >
           <h2 class="text-2xl font-bold text-[#F24E1E]">Figma</h2>
           <hr class="border-[#F24E1E]" />
